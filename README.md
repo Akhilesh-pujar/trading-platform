@@ -1,8 +1,8 @@
-<h3>Welcome to Click Trade, a trading platform designed to help users easily buy and sell stocks and other assets. Our platform is built on modern web technologies to ensure fast and reliable transactions. With real-time data from finvesia, users can make informed decisions on their trades. Our platform also includes advanced features such as adding different broker and there is no limit for buying, giving users complete control over their trading experience.
+<p>Welcome to Click Trade, a trading platform designed to help users easily buy and sell stocks and other assets. Our platform is built on modern web technologies to ensure fast and reliable transactions. With real-time data from finvesia, users can make informed decisions on their trades. Our platform also includes advanced features such as adding different broker and there is no limit for buying, giving users complete control over their trading experience.
 
 I prioritize user security, so I implement industry-standard encryption and multi-factor authentication. 
 
-</h3>
+</p>
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
