@@ -1,9 +1,3 @@
-<p>Welcome to Click Trade, a trading platform designed to help users easily buy and sell stocks and other assets. Our platform is built on modern web technologies to ensure fast and reliable transactions. With real-time data from finvesia, users can make informed decisions on their trades. Our platform also includes advanced features such as adding different broker and there is no limit for buying, giving users complete control over their trading experience.
-
-I prioritize user security, so I implement industry-standard encryption and multi-factor authentication. 
-
-</p>
-
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -20,9 +14,9 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
