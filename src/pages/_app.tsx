@@ -75,8 +75,9 @@ export default function App({
         <meta charSet="utf-8" />
         <title>
           Tojo - Online stock trading at lowest prices from India&apos;s biggest
-          stock broker – Tojo
+          stock broker
         </title>
+        <link rel="icon" href="/icon/favicon.ico" />
         <meta
           name="description"
           content="Tojo - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds"
@@ -106,7 +107,6 @@ export default function App({
         <meta property="og:url" content="https://tojo.com/" />
         <meta name="referrer" content="origin" />
         <link rel="image_src" href="/static/images/landing.png" />
-        <link rel="icon" href="/icon/favicon.ico" />
         <link
           rel="stylesheet"
           href="https://tojo.com/static/css/bundle.min.css"

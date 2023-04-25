@@ -17,6 +17,7 @@ const FooterElement = styled.footer`
   text-align: center;
   transition: 0.15s;
   box-shadow: 0 0 1rem rgb(var(--dark-color), 0.1);
+  border: 1px solid rgb(var(--dark-color), 0.1);
   & .row {
     margin-bottom: 2rem;
     display: flex;
@@ -193,9 +194,7 @@ const Footer = () => {
           <div className="col">
             <div className="col-header">
               <h2 onMouseOver={mouseOver}>{logo}</h2>
-              <span>
-                Get a turbocharged rush with Tojo&apos;s Trading solutions
-              </span>
+              <span>Get a turbocharged rush with Tojo Tradings</span>
             </div>
             <div className="col-body">
               <ul className="description">
@@ -203,15 +202,14 @@ const Footer = () => {
                   Designed and built with all the love in the world by the Tojo
                   using Next.js.
                 </li>
-                <li>Code licensed GNU General Public License v3.0.</li>
               </ul>
             </div>
           </div>
-          <div className="col">
+          {/* <div className="col">
             <Link href="/dashboard" className="dashboard">
               Dashboard
             </Link>
-          </div>
+          </div> */}
         </div>
         <div className="credits">
           <div className="left">
@@ -258,7 +256,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          <div className="right">© 2023 Tojo, Inc.</div>
+          <div className="right">© 2023 Tojo Tradings, Inc.</div>
         </div>
       </div>
     </FooterElement>

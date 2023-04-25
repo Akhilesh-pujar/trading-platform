@@ -23,6 +23,7 @@ const HeaderStyle = styled.header`
       gap: 2rem;
       & h1 {
         position: relative;
+        text-transform: uppercase;
         font-size: 1.5rem;
         font-weight: 600;
         color: rgb(var(--primary-color));
