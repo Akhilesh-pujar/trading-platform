@@ -63,6 +63,7 @@ const Section = styled.section`
       }
       & table {
         border-collapse: collapse;
+        border-radius: 0.25rem;
         width: 100%;
         & td {
           padding: 0.75rem;
@@ -84,7 +85,6 @@ const Section = styled.section`
           }
         }
       }
-      th,
       td {
         border: 1px solid rgb(var(--dark-color), 0.1);
       }

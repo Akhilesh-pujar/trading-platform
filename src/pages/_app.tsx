@@ -107,10 +107,6 @@ export default function App({
         <meta property="og:url" content="https://tojo.com/" />
         <meta name="referrer" content="origin" />
         <link rel="image_src" href="/static/images/landing.png" />
-        <link
-          rel="stylesheet"
-          href="https://tojo.com/static/css/bundle.min.css"
-        />
       </Head>
       <GlobalStyle />
       <div className={inter.variable}>
