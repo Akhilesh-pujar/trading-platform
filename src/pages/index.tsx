@@ -12,7 +12,7 @@ const Main = styled.main`
   align-items: center;
 `;
 
-const index = () => {
+const Home = () => {
   // "emsg":"Invalid Input :  uid or pwd or factor2 or imei or apkversion or vc or appkey or source is Missing."
   // {"stat":"Not_Ok","emsg":"Invalid Input :  Invalid App Key"}
   // Status: 200
@@ -56,4 +56,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Home;
