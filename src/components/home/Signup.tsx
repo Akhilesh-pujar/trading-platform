@@ -1,6 +1,12 @@
 import Image from "next/image";
 import accountOpen from "../../../public/img/account_open.png";
 import styled from "styled-components";
+import { signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useForm } from "react-hook-form";
+import { object, InferType, number } from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const Section = styled.section`
   min-height: 100vh;
@@ -127,7 +133,37 @@ const Section = styled.section`
   }
 `;
 
+const phoneNumberSchema = object({
+  phoneNumber: number().min(10).max(10).required(),
+});
+
+type FormData = InferType<typeof phoneNumberSchema>;
+
 const Signup = () => {
+  // login with mobile number with firebase with otp verification with react-firebase-hooks
+  const [user, loading, error] = useAuthState(auth);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(phoneNumberSchema),
+  });
+  const sendOTP = async ({ phoneNumber }: FormData) => {
+    const confirmationResult = await signInWithPhoneNumber(
+      auth,
+      `+91${phoneNumber}`,
+      window
+    );
+    const code = window.prompt("Enter OTP");
+    if (code) {
+      const credential = await confirmationResult.confirm(code);
+      const user = credential.user;
+      console.log(user);
+    }
+    reset();
+  };
   return (
     <Section>
       <div className="content">
@@ -138,7 +174,7 @@ const Signup = () => {
       </div>
       <div className="form-container">
         <Image src={accountOpen} alt="Tojo, no. 1 stock broker in India" />
-        <form>
+        <form onSubmit={handleSubmit(sendOTP)}>
           <div className="form-top">
             <h2>Signup now</h2>
             <p>Or track your existing application</p>
@@ -151,13 +187,18 @@ const Signup = () => {
                   <input
                     type="number"
                     placeholder="Your 10 digit mobile number"
+                    {...register("phoneNumber")}
                   />
                 </td>
               </tr>
             </tbody>
           </table>
           <p className="small">You will receive an OTP on your number</p>
-          <button>Continue</button>
+          {errors.phoneNumber && (
+            <p className="small alert">{errors.phoneNumber?.message}</p>
+          )}
+          <div id="recaptcha-container"></div>
+          <button type="submit">Continue</button>
         </form>
       </div>
     </Section>

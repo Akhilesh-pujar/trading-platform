@@ -131,7 +131,7 @@ const Header = () => {
     <HeaderStyle>
       <div className="navbar container">
         <div className="links">
-          <h1>tojo</h1>
+          <h1>Flash Cliq</h1>
           <ul>
             <li>
               <Link href="#home">Home</Link>
