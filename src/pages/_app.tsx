@@ -109,13 +109,16 @@ export default function App({
         <link rel="image_src" href="/static/images/landing.png" />
       </Head>
       <GlobalStyle />
-      <div className={inter.variable}>
-        <motion.div variants={container} initial="hidden" animate="show">
-          {!Component.getLayout && <Header />}
-          <Component {...pageProps} />
-          {!Component.getLayout && <Footer />}
-        </motion.div>
-      </div>
+      <motion.div
+        className={inter.variable}
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        {!Component.getLayout && <Header />}
+        <Component {...pageProps} />
+        {!Component.getLayout && <Footer />}
+      </motion.div>
     </>
   );
 }

@@ -1,12 +1,18 @@
 import Image from "next/image";
 import accountOpen from "../../../public/img/account_open.png";
 import styled from "styled-components";
-import { signInWithPhoneNumber } from "firebase/auth";
+import {
+  ConfirmationResult,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from "firebase/auth";
 import { auth } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { object, InferType, number } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 const Section = styled.section`
   min-height: 100vh;
@@ -134,35 +140,89 @@ const Section = styled.section`
 `;
 
 const phoneNumberSchema = object({
-  phoneNumber: number().min(10).max(10).required(),
+  // phoneNumber is only number and length is 10
+  phoneNumber: number()
+    .required()
+    .typeError("Phone number is required")
+    .test({
+      name: "len",
+      message: "Phone number must be exactly 10 digits",
+      test: (val) => val?.toString().length === 10,
+    }),
 });
 
-type FormData = InferType<typeof phoneNumberSchema>;
+const otpSchema = object({
+  // otp is only number and length is 6
+  otp: number()
+    .required()
+    .typeError("OTP is required")
+    .test({
+      name: "len",
+      message: "OTP must be exactly 6 digits",
+      test: (val) => val?.toString().length === 6,
+    }),
+});
+
+type FormDataPhoneNumber = InferType<typeof phoneNumberSchema>;
+type FormDataOTP = InferType<typeof otpSchema>;
+
+type Window = typeof window & {
+  recaptchaVerifier?: RecaptchaVerifier;
+};
 
 const Signup = () => {
-  // login with mobile number with firebase with otp verification with react-firebase-hooks
   const [user, loading, error] = useAuthState(auth);
+  const [showOTP, setShowOTP] = useState<ConfirmationResult | null>(null);
+  const { push } = useRouter();
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({
+    register: registerPhoneNumber,
+    handleSubmit: handleSubmitPhoneNumber,
+    reset: resetPhoneNumber,
+    formState: { errors: errorsPhoneNumber },
+  } = useForm<FormDataPhoneNumber>({
     resolver: yupResolver(phoneNumberSchema),
   });
-  const sendOTP = async ({ phoneNumber }: FormData) => {
+  const sendOTP = async ({ phoneNumber }: FormDataPhoneNumber) => {
+    const windowWithVerifier = window as Window;
+    const appVerifier = windowWithVerifier.recaptchaVerifier
+      ? windowWithVerifier.recaptchaVerifier
+      : (windowWithVerifier.recaptchaVerifier = new RecaptchaVerifier(
+          "recaptcha-container",
+          {
+            size: "invisible",
+            callback: () => {},
+            "expired-callback": () => {},
+          },
+          auth
+        ));
+    const phoneNumberWithCountryCode = `+91${phoneNumber}`;
     const confirmationResult = await signInWithPhoneNumber(
       auth,
-      `+91${phoneNumber}`,
-      window
+      phoneNumberWithCountryCode,
+      appVerifier
     );
-    const code = window.prompt("Enter OTP");
-    if (code) {
-      const credential = await confirmationResult.confirm(code);
-      const user = credential.user;
-      console.log(user);
+    console.log(confirmationResult);
+    setShowOTP(confirmationResult);
+    resetPhoneNumber();
+  };
+  const {
+    register: registerOTP,
+    handleSubmit: handleSubmitOTP,
+    reset: resetOTP,
+    formState: { errors: errorsOTP },
+  } = useForm<FormDataOTP>({
+    resolver: yupResolver(otpSchema),
+  });
+  const verifyOTP = async ({ otp }: FormDataOTP) => {
+    if (showOTP) {
+      const confirmationResult = showOTP;
+      const credential = await confirmationResult.confirm(otp.toString());
+      console.log(credential);
+      setShowOTP(null);
+      resetOTP();
+      // redirect to broker list page
+      push("/broker-list");
     }
-    reset();
   };
   return (
     <Section>
@@ -174,32 +234,59 @@ const Signup = () => {
       </div>
       <div className="form-container">
         <Image src={accountOpen} alt="Tojo, no. 1 stock broker in India" />
-        <form onSubmit={handleSubmit(sendOTP)}>
-          <div className="form-top">
-            <h2>Signup now</h2>
-            <p>Or track your existing application</p>
-          </div>
-          <table>
-            <tbody>
-              <tr>
-                <td>+91</td>
-                <td>
-                  <input
-                    type="number"
-                    placeholder="Your 10 digit mobile number"
-                    {...register("phoneNumber")}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="small">You will receive an OTP on your number</p>
-          {errors.phoneNumber && (
-            <p className="small alert">{errors.phoneNumber?.message}</p>
-          )}
-          <div id="recaptcha-container"></div>
-          <button type="submit">Continue</button>
-        </form>
+        {!showOTP ? (
+          <form onSubmit={handleSubmitPhoneNumber(sendOTP)}>
+            <div className="form-top">
+              <h2>Signup now</h2>
+              <p>Or track your existing application</p>
+            </div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>+91</td>
+                  <td>
+                    <input
+                      type="number"
+                      placeholder="Your 10 digit mobile number"
+                      {...registerPhoneNumber("phoneNumber")}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="small">You will receive an OTP on your number</p>
+            {errorsPhoneNumber.phoneNumber && (
+              <p className="small alert">
+                {errorsPhoneNumber.phoneNumber?.message}
+              </p>
+            )}
+            <div id="recaptcha-container"></div>
+            <button type="submit">Continue</button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmitOTP(verifyOTP)}>
+            <div className="form-top">
+              <h2>Enter OTP</h2>
+              <p>Enter the OTP sent to your mobile number</p>
+            </div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>OTP</td>
+                  <td>
+                    <input
+                      type="number"
+                      placeholder="Enter OTP"
+                      {...registerOTP("otp")}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="small">You will receive an OTP on your number</p>
+            <button type="submit">Continue</button>
+          </form>
+        )}
       </div>
     </Section>
   );

@@ -3,16 +3,16 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: `${process.env.FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
-  messagingSenderId: process.env.FIREBASE_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
+  apiKey: "AIzaSyDXstsZfJ-7uEujulpGcZEwPN--CxmY_qg",
+  authDomain: "trading-plaform.firebaseapp.com",
+  projectId: "trading-plaform",
+  storageBucket: "trading-plaform.appspot.com",
+  messagingSenderId: "225380924544",
+  appId: "1:225380924544:web:e962ca28042c43371a7a65",
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth };
+export { db, auth, app };

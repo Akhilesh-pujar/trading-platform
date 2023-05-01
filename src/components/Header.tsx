@@ -2,7 +2,7 @@ import Link from "next/link";
 import styled from "styled-components";
 
 const HeaderStyle = styled.header`
-  position: fixed;
+  position: sticky;
   inset: 0 0 auto 0;
   display: flex;
   justify-content: center;
@@ -134,7 +134,7 @@ const Header = () => {
           <h1>Flash Cliq</h1>
           <ul>
             <li>
-              <Link href="#home">Home</Link>
+              <Link href="/#home">Home</Link>
             </li>
             <li>
               <Link href="/about">About</Link>

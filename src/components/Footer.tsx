@@ -7,7 +7,6 @@ import {
   BsYoutube,
 } from "react-icons/bs";
 import { useState } from "react";
-import Link from "next/link";
 
 const FooterElement = styled.footer`
   background-color: rgb(var(--dark-color), 0.05);
@@ -166,7 +165,7 @@ const FooterElement = styled.footer`
 `;
 
 const Footer = () => {
-  const original = "Tojo";
+  const original = "FLASH CLIQ";
   const [logo, setLogo] = useState<string>(original);
   const mouseOver = (): void => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
