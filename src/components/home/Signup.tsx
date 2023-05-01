@@ -2,6 +2,11 @@ import Image from "next/image";
 import accountOpen from "../../../public/img/account_open.png";
 import styled from "styled-components";
 
+import { useState } from "react";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
 const Section = styled.section`
   min-height: 100vh;
   width: 100%;
@@ -65,6 +70,7 @@ const Section = styled.section`
         border-collapse: collapse;
         border-radius: 0.25rem;
         width: 100%;
+        border-radius:5px;
         & td {
           padding: 0.75rem;
           font-size: 1.25rem;
@@ -73,6 +79,7 @@ const Section = styled.section`
             width: 100%;
             border: none;
             outline: none;
+            
             font-size: 1.25rem;
             &::placeholder {
               font-size: 1.2rem;
@@ -128,6 +135,23 @@ const Section = styled.section`
 `;
 
 const Signup = () => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationId, setVerificationId] = useState(null);
+  const [verificationCode, setVerificationCode] = useState('');
+
+  const handleSendOTP = () => {
+    firebase.auth().signInWithPhoneNumber(phoneNumber)
+      .then((verificationId: React.SetStateAction<null>) => setVerificationId(verificationId))
+      .catch((error: any) => console.error(error));
+  };
+
+  const handleVerifyOTP = () => {
+    const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+    firebase.auth().signInWithCredential(credential)
+      .then((user: any) => console.log(user))
+      .catch((error: any) => console.error(error));
+  };
+
   return (
     <Section>
       <div className="content">
@@ -146,20 +170,28 @@ const Signup = () => {
           <table>
             <tbody>
               <tr>
-                <td>+91</td>
+
                 <td>
-                  <input
-                    type="number"
-                    placeholder="Your 10 digit mobile number"
-                  />
+
+                  <input type="number" placeholder="Enter Number" />
                 </td>
               </tr>
+
+              <td>
+                <input type="text" id="otp" value={verificationCode} placeholder='Enter your otp' onChange={e => setVerificationCode(e.target.value)} />
+              </td>
+
             </tbody>
           </table>
           <p className="small">You will receive an OTP on your number</p>
-          <button>Continue</button>
+
+
+          <button className='button' onClick={handleSendOTP}>Get OTP</button>
+          <button className='button' onClick={handleVerifyOTP}>Verify OTP</button>
         </form>
+
       </div>
+
     </Section>
   );
 };
