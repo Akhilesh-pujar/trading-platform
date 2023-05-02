@@ -1,18 +1,11 @@
 import Image from "next/image";
 import accountOpen from "../../../public/img/account_open.png";
 import styled from "styled-components";
-import {
-  ConfirmationResult,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
-import { auth } from "../../../firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useForm } from "react-hook-form";
-import { object, InferType, number } from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { ConfirmationResult } from "firebase/auth";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import FormPhoneNumber from "./form/FormPhoneNumber";
+import FormOTP from "./form/FormOTP";
+import { AnimatePresence } from "framer-motion";
 
 const Section = styled.section`
   min-height: 100vh;
@@ -111,6 +104,10 @@ const Section = styled.section`
         font-weight: 500;
         color: rgb(var(--light-color));
         padding: 0.75rem 1.25rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
         border-radius: 5rem;
         background-color: rgb(var(--primary-color));
         border: 1px solid rgb(var(--light-color), 0.1);
@@ -134,158 +131,65 @@ const Section = styled.section`
           box-shadow: 0 0 0.75rem rgb(var(--primary-color), 0.75);
           animation-play-state: paused;
         }
+        &:disabled {
+          background-color: rgb(var(--dark-color), 0.25);
+          box-shadow: none;
+          animation-play-state: paused;
+        }
+        & span.loader {
+          width: 1rem;
+          height: 1rem;
+          display: inline-block;
+          position: relative;
+          &::after,
+          &::before {
+            content: "";
+            box-sizing: border-box;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            position: absolute;
+            inset: -0.25rem;
+            animation: animloader 2s linear infinite;
+          }
+          &::after {
+            animation-delay: 1s;
+          }
+          @keyframes animloader {
+            0% {
+              transform: scale(0);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1);
+              opacity: 0;
+            }
+          }
+        }
       }
     }
   }
 `;
 
-const phoneNumberSchema = object({
-  // phoneNumber is only number and length is 10
-  phoneNumber: number()
-    .required()
-    .typeError("Phone number is required")
-    .test({
-      name: "len",
-      message: "Phone number must be exactly 10 digits",
-      test: (val) => val?.toString().length === 10,
-    }),
-});
-
-const otpSchema = object({
-  // otp is only number and length is 6
-  otp: number()
-    .required()
-    .typeError("OTP is required")
-    .test({
-      name: "len",
-      message: "OTP must be exactly 6 digits",
-      test: (val) => val?.toString().length === 6,
-    }),
-});
-
-type FormDataPhoneNumber = InferType<typeof phoneNumberSchema>;
-type FormDataOTP = InferType<typeof otpSchema>;
-
-type Window = typeof window & {
-  recaptchaVerifier?: RecaptchaVerifier;
-};
-
 const Signup = () => {
-  const [user, loading, error] = useAuthState(auth);
   const [showOTP, setShowOTP] = useState<ConfirmationResult | null>(null);
-  const { push } = useRouter();
-  const {
-    register: registerPhoneNumber,
-    handleSubmit: handleSubmitPhoneNumber,
-    reset: resetPhoneNumber,
-    formState: { errors: errorsPhoneNumber },
-  } = useForm<FormDataPhoneNumber>({
-    resolver: yupResolver(phoneNumberSchema),
-  });
-  const sendOTP = async ({ phoneNumber }: FormDataPhoneNumber) => {
-    const windowWithVerifier = window as Window;
-    const appVerifier = windowWithVerifier.recaptchaVerifier
-      ? windowWithVerifier.recaptchaVerifier
-      : (windowWithVerifier.recaptchaVerifier = new RecaptchaVerifier(
-          "recaptcha-container",
-          {
-            size: "invisible",
-            callback: () => {},
-            "expired-callback": () => {},
-          },
-          auth
-        ));
-    const phoneNumberWithCountryCode = `+91${phoneNumber}`;
-    const confirmationResult = await signInWithPhoneNumber(
-      auth,
-      phoneNumberWithCountryCode,
-      appVerifier
-    );
-    console.log(confirmationResult);
-    setShowOTP(confirmationResult);
-    resetPhoneNumber();
-  };
-  const {
-    register: registerOTP,
-    handleSubmit: handleSubmitOTP,
-    reset: resetOTP,
-    formState: { errors: errorsOTP },
-  } = useForm<FormDataOTP>({
-    resolver: yupResolver(otpSchema),
-  });
-  const verifyOTP = async ({ otp }: FormDataOTP) => {
-    if (showOTP) {
-      const confirmationResult = showOTP;
-      const credential = await confirmationResult.confirm(otp.toString());
-      console.log(credential);
-      setShowOTP(null);
-      resetOTP();
-      // redirect to broker list page
-      push("/broker-list");
-    }
-  };
   return (
     <Section>
       <div className="content">
         <h2>Join 1+ Crore investors & traders</h2>
-        <p>
-          Open a trading and Demat account online and start investing for free
-        </p>
+        <p>Open a trading and Demat account online and start investing</p>
       </div>
       <div className="form-container">
-        <Image src={accountOpen} alt="Tojo, no. 1 stock broker in India" />
+        <Image src={accountOpen} alt="FlashCliq, no. 1 stock broker in India" />
         {!showOTP ? (
-          <form onSubmit={handleSubmitPhoneNumber(sendOTP)}>
-            <div className="form-top">
-              <h2>Signup now</h2>
-              <p>Or track your existing application</p>
-            </div>
-            <table>
-              <tbody>
-                <tr>
-                  <td>+91</td>
-                  <td>
-                    <input
-                      type="number"
-                      placeholder="Your 10 digit mobile number"
-                      {...registerPhoneNumber("phoneNumber")}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p className="small">You will receive an OTP on your number</p>
-            {errorsPhoneNumber.phoneNumber && (
-              <p className="small alert">
-                {errorsPhoneNumber.phoneNumber?.message}
-              </p>
-            )}
-            <div id="recaptcha-container"></div>
-            <button type="submit">Continue</button>
-          </form>
+          <AnimatePresence mode="wait">
+            <FormPhoneNumber setShowOTP={setShowOTP} />
+          </AnimatePresence>
         ) : (
-          <form onSubmit={handleSubmitOTP(verifyOTP)}>
-            <div className="form-top">
-              <h2>Enter OTP</h2>
-              <p>Enter the OTP sent to your mobile number</p>
-            </div>
-            <table>
-              <tbody>
-                <tr>
-                  <td>OTP</td>
-                  <td>
-                    <input
-                      type="number"
-                      placeholder="Enter OTP"
-                      {...registerOTP("otp")}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p className="small">You will receive an OTP on your number</p>
-            <button type="submit">Continue</button>
-          </form>
+          <AnimatePresence mode="wait">
+            <FormOTP showOTP={showOTP} />
+          </AnimatePresence>
         )}
       </div>
     </Section>
