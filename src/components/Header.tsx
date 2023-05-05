@@ -8,7 +8,7 @@ const HeaderStyle = styled.header`
   justify-content: center;
   backdrop-filter: blur(0.25rem);
   border: 1px solid rgb(var(--dark-color), 0.1);
-  z-index: 10;
+  z-index: 1;
   & .navbar {
     display: flex;
     justify-content: space-between;
@@ -23,7 +23,6 @@ const HeaderStyle = styled.header`
       gap: 2rem;
       & h1 {
         position: relative;
-        text-transform: uppercase;
         font-size: 1.5rem;
         font-weight: 600;
         color: rgb(var(--primary-color));
@@ -131,10 +130,10 @@ const Header = () => {
     <HeaderStyle>
       <div className="navbar container">
         <div className="links">
-          <h1>tojo</h1>
+          <h1>FlashCliq</h1>
           <ul>
             <li>
-              <Link href="#home">Home</Link>
+              <Link href="/#home">Home</Link>
             </li>
             <li>
               <Link href="/about">About</Link>

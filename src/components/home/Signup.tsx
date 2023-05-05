@@ -1,6 +1,11 @@
 import Image from "next/image";
 import accountOpen from "../../../public/img/account_open.png";
 import styled from "styled-components";
+import { ConfirmationResult } from "firebase/auth";
+import { useState } from "react";
+import FormPhoneNumber from "./form/FormPhoneNumber";
+import FormOTP from "./form/FormOTP";
+import { AnimatePresence } from "framer-motion";
 
 import { useState } from "react";
 import firebase from 'firebase/compat/app';
@@ -106,6 +111,10 @@ const Section = styled.section`
         font-weight: 500;
         color: rgb(var(--light-color));
         padding: 0.75rem 1.25rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
         border-radius: 5rem;
         background-color: rgb(var(--primary-color));
         border: 1px solid rgb(var(--light-color), 0.1);
@@ -129,12 +138,51 @@ const Section = styled.section`
           box-shadow: 0 0 0.75rem rgb(var(--primary-color), 0.75);
           animation-play-state: paused;
         }
+        &:disabled {
+          background-color: rgb(var(--dark-color), 0.25);
+          box-shadow: none;
+          animation-play-state: paused;
+        }
+        & span.loader {
+          width: 1rem;
+          height: 1rem;
+          display: inline-block;
+          position: relative;
+          &::after,
+          &::before {
+            content: "";
+            box-sizing: border-box;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            position: absolute;
+            inset: -0.25rem;
+            animation: animloader 2s linear infinite;
+          }
+          &::after {
+            animation-delay: 1s;
+          }
+          @keyframes animloader {
+            0% {
+              transform: scale(0);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1);
+              opacity: 0;
+            }
+          }
+        }
       }
     }
   }
 `;
 
 const Signup = () => {
+
+  const [showOTP, setShowOTP] = useState<ConfirmationResult | null>(null);
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationId, setVerificationId] = useState(null);
   const [verificationCode, setVerificationCode] = useState('');
@@ -152,15 +200,26 @@ const Signup = () => {
       .catch((error: any) => console.error(error));
   };
 
+
   return (
     <Section>
       <div className="content">
         <h2>Join 1+ Crore investors & traders</h2>
-        <p>
-          Open a trading and Demat account online and start investing for free
-        </p>
+        <p>Open a trading and Demat account online and start investing</p>
       </div>
       <div className="form-container">
+
+        <Image src={accountOpen} alt="FlashCliq, no. 1 stock broker in India" />
+        {!showOTP ? (
+          <AnimatePresence mode="wait">
+            <FormPhoneNumber setShowOTP={setShowOTP} />
+          </AnimatePresence>
+        ) : (
+          <AnimatePresence mode="wait">
+            <FormOTP showOTP={showOTP} />
+          </AnimatePresence>
+        )}
+
         <Image src={accountOpen} alt="Tojo, no. 1 stock broker in India" />
         <form>
           <div className="form-top">
@@ -189,6 +248,7 @@ const Signup = () => {
           <button className='button' onClick={handleSendOTP}>Get OTP</button>
           <button className='button' onClick={handleVerifyOTP}>Verify OTP</button>
         </form>
+
 
       </div>
 

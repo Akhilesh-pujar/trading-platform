@@ -7,7 +7,6 @@ import {
   BsYoutube,
 } from "react-icons/bs";
 import { useState } from "react";
-import Link from "next/link";
 
 const FooterElement = styled.footer`
   background-color: rgb(var(--dark-color), 0.05);
@@ -41,7 +40,6 @@ const FooterElement = styled.footer`
         & h2 {
           font-size: 1.5rem;
           color: rgb(var(--primary-color));
-          text-transform: uppercase;
         }
         & span {
           font-size: 1rem;
@@ -166,10 +164,10 @@ const FooterElement = styled.footer`
 `;
 
 const Footer = () => {
-  const original = "Tojo";
+  const original = "FlashCliq";
   const [logo, setLogo] = useState<string>(original);
   const mouseOver = (): void => {
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     let iterations = 0;
     const interval = setInterval(() => {
       setLogo((prev) =>
@@ -179,7 +177,7 @@ const Footer = () => {
             if (index < iterations) {
               return original[index];
             }
-            return letters[Math.floor(Math.random() * 26)];
+            return letters[Math.floor(Math.random() * 52)];
           })
           .join("")
       );
@@ -194,13 +192,13 @@ const Footer = () => {
           <div className="col">
             <div className="col-header">
               <h2 onMouseOver={mouseOver}>{logo}</h2>
-              <span>Get a turbocharged rush with Tojo Tradings</span>
+              <span>Get a turbocharged rush with FlashCliq Tradings</span>
             </div>
             <div className="col-body">
               <ul className="description">
                 <li>
-                  Designed and built with all the love in the world by the Tojo
-                  using Next.js.
+                  Designed and built with all the love in the world by the
+                  FlashCliq using Next.js.
                 </li>
               </ul>
             </div>
@@ -256,7 +254,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          <div className="right">© 2023 Tojo Tradings, Inc.</div>
+          <div className="right">© 2023 FlashCliq Tradings, Inc.</div>
         </div>
       </div>
     </FooterElement>

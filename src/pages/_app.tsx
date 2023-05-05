@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { createGlobalStyle } from "styled-components";
 import { motion } from "framer-motion";
 import { Page } from "../../page";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -74,13 +75,13 @@ export default function App({
       <Head>
         <meta charSet="utf-8" />
         <title>
-          Tojo - Online stock trading at lowest prices from India&apos;s biggest
-          stock broker
+          FlashCliq - Online stock trading at lowest prices from India&apos;s
+          biggest stock broker
         </title>
         <link rel="icon" href="/icon/favicon.ico" />
         <meta
           name="description"
-          content="Tojo - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds"
+          content="FlashCliq - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds"
         />
         <meta
           name="keywords"
@@ -89,33 +90,37 @@ export default function App({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           property="og:image"
-          content="https://tojo.com/static/images/landing.png"
+          content="https://flashcliq.com/static/images/landing.png"
         />
         <meta
           property="og:description"
-          content="Tojo - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds"
+          content="FlashCliq - India's biggest stock broker offering the lowest, cheapest brokerage rates for futures and options, commodity trading, equity and mutual funds"
         />
         <meta
           property="og:image:alt"
-          content="Tojo - Online stock trading at lowest prices from India's biggest stock broker"
+          content="FlashCliq - Online stock trading at lowest prices from India's biggest stock broker"
         />
         <meta
           property="og:title"
-          content="Tojo - Online stock trading at lowest prices from India's biggest stock broker"
+          content="FlashCliq - Online stock trading at lowest prices from India's biggest stock broker"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tojo.com/" />
+        <meta property="og:url" content="https://flashcliq.com/" />
         <meta name="referrer" content="origin" />
         <link rel="image_src" href="/static/images/landing.png" />
       </Head>
       <GlobalStyle />
-      <div className={inter.variable}>
-        <motion.div variants={container} initial="hidden" animate="show">
-          {!Component.getLayout && <Header />}
-          <Component {...pageProps} />
-          {!Component.getLayout && <Footer />}
-        </motion.div>
-      </div>
+      <motion.div
+        className={inter.variable}
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        <Toaster />
+        {!Component.getLayout && <Header />}
+        <Component {...pageProps} />
+        {!Component.getLayout && <Footer />}
+      </motion.div>
     </>
   );
 }
