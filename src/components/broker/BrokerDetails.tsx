@@ -1,49 +1,23 @@
 import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, object, string } from "yup";
-import { Dispatch, SetStateAction } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { SHA256 } from "crypto-js";
+import axios from "axios";
 
 const brokerSchema = object({
   userid: string()
     .required()
-    .min(6)
-    .max(6)
-    .test({
-      name: "required",
-      message: "User ID is required",
-      test: (val) => val?.toString().length === 6,
-    }),
-  pan: string()
-    .required()
-    .test({
-      name: "required",
-      message: "Password is required",
-      test: (val) => val?.toString().length > 0,
-    }),
-  password: string()
-    .required()
-    .test({
-      name: "required",
-      message: "Password is required",
-      test: (val) => val?.toString().length > 0,
-    }),
-  venderCode: string()
-    .required()
-    .test({
-      name: "required",
-      message: "Vender Code is required",
-      test: (val) => val?.toString().length > 0,
-    }),
-  apiKey: string()
-    .required()
-    .test({
-      name: "required",
-      message: "API Key is required",
-      test: (val) => val?.toString().length > 0,
-    }),
+    .min(7, "User ID must be at most 7 characters")
+    .max(7, "User ID must be at most 7 characters")
+    .required(),
+  pan: string().required("Pan Number is required"),
+  password: string().required("Password is required"),
+  venderCode: string().required("Vender Code is required"),
+  apiKey: string().required("API Key is required"),
 });
 
 type FormDataBroker = InferType<typeof brokerSchema>;
@@ -66,15 +40,52 @@ const BrokerDetails = ({
   } = useForm<FormDataBroker>({
     resolver: yupResolver(brokerSchema),
   });
-  const sendOTP = async (data: FormDataBroker) => {
-    console.log(data);
-    toast.success("OTP sent successfully");
+  const sendOTP = async ({
+    userid,
+    apiKey,
+    pan,
+    password,
+    venderCode,
+  }: FormDataBroker) => {
     setShowOTP(true);
+    let encryptedData = {
+      userid: userid,
+      pan: pan,
+      password: SHA256(password).toString(),
+      venderCode: venderCode,
+      apiKey: apiKey,
+    };
+    localStorage.setItem("broker", JSON.stringify(encryptedData));
+    // await axios
+    //   .post(
+    //     "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP",
+    //     "jData=" + JSON.stringify({ uid: userid, pan: pan.toUpperCase() })
+    //   )
+    //   .then(({ data }) => {
+    //     if (data?.stat === "Ok") {
+    //       let encryptedData = {
+    //         userid: userid,
+    //         pan: pan,
+    //         password: SHA256(password).toString(),
+    //         venderCode: venderCode,
+    //         apiKey: apiKey,
+    //       };
+    //       localStorage.setItem("broker", JSON.stringify(encryptedData));
+    //       toast.success("OTP sent successfully");
+    //       setShowOTP(true);
+    //     } else {
+    //       toast.error(data.ReqStatus);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     toast.error("Error sending OTP");
+    //   });
   };
   return (
     <motion.form
       onSubmit={handleSubmitBroker(sendOTP)}
-      key="form-otp"
+      key="form-details-add-broker"
       variants={container}
       initial="hidden"
       animate="show"
@@ -86,7 +97,7 @@ const BrokerDetails = ({
       <div className="input-group">
         <input type="text" id="userid" {...registerBroker("userid")} required />
         <label htmlFor="userid">User ID</label>
-        <p className="error">{errorsBroker.userid?.message}</p>
+        <p className="error">{errorsBroker?.userid?.message}</p>
       </div>
       <div className="input-group">
         <input type="text" id="pan" {...registerBroker("pan")} required />
@@ -97,6 +108,7 @@ const BrokerDetails = ({
         <input
           type="password"
           id="password"
+          autoComplete="on"
           {...registerBroker("password")}
           required
         />

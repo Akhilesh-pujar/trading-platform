@@ -1,7 +1,13 @@
+import BrokerTable from "@/components/broker/BrokerTable";
+import { collection } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { ReactElement } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
+import { auth, db } from "../../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { BrokerDetail } from "../../../BrokerDetail";
 
 const BrokerListStyled = styled.div`
   color: rgb(var(--dark-color), 0.5);
@@ -14,9 +20,17 @@ const BrokerListStyled = styled.div`
 `;
 
 const BrokerList = () => {
+  const [user] = useAuthState(auth);
+  const [users] = useCollection(collection(db, "users"), {
+    snapshotListenOptions: { includeMetadataChanges: false },
+  });
+  const brokers: BrokerDetail[] = users?.docs
+    .map((doc) => doc.data())
+    .find((userFirestore) => userFirestore.uid === user?.uid)?.brokers;
   return (
     <BrokerListStyled>
       <BrokerListTop />
+      <BrokerTable brokerDetails={brokers} />
     </BrokerListStyled>
   );
 };

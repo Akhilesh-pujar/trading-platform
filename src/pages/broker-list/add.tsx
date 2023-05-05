@@ -5,7 +5,7 @@ import { GetServerSideProps } from "next";
 import { ReactElement, useState } from "react";
 import styled from "styled-components";
 
-const AddBrokerStyled = styled.form`
+const AddBrokerStyled = styled.div`
   color: rgb(var(--dark-color), 0.5);
   min-height: 100vh;
   display: grid;
@@ -16,7 +16,7 @@ const AddBrokerStyled = styled.form`
     justify-content: center;
     align-items: center;
     width: min(100%, 40rem);
-    gap: 1.25rem;
+    gap: 1.75rem;
     padding: 2rem;
     border: 1px solid rgb(var(--dark-color), 0.1);
     border-radius: 0.5rem;
@@ -75,8 +75,8 @@ const AddBrokerStyled = styled.form`
       }
       & .error {
         position: absolute;
-        bottom: -0.5rem;
-        left: 0;
+        bottom: -1rem;
+        left: 0.5rem;
         color: rgb(var(--danger-color));
         font-size: 0.75rem;
       }

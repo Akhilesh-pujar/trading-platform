@@ -4,6 +4,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, number, object } from "yup";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { SHA256 } from "crypto-js";
+import axios from "axios";
+import { authenticator } from "otplib";
+import { toast } from "react-hot-toast";
+import { auth, db } from "../../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { addDoc, collection } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 const otpSchema = object({
   // otp is only number and length is 6
@@ -27,6 +35,9 @@ const container = {
 
 const BrokerOTP = () => {
   const { push } = useRouter();
+  // get the user details from firebase
+  const [user] = useAuthState(auth);
+  const [users] = useCollection(collection(db, "users"));
   const {
     register: registerOTP,
     handleSubmit: handleSubmitOTP,
@@ -34,14 +45,95 @@ const BrokerOTP = () => {
   } = useForm<FormDataOTP>({
     resolver: yupResolver(otpSchema),
   });
-  const verifyOTP = (data: FormDataOTP) => {
-    console.log(data);
-    push("/broker-list");
+  const verifyOTP = async ({ otp }: FormDataOTP) => {
+    // const password = sha256("Shan@1234").toString();
+    // const userid = "FA97180";
+    // const apiSecret = "0d14c648394ca23897d46627fe7e08a8";
+    const {
+      pan,
+      userid,
+      password,
+      venderCode,
+      apiKey,
+    }: {
+      pan: string;
+      userid: string;
+      password: string;
+      venderCode: string;
+      apiKey: string;
+    } = JSON.parse(localStorage.getItem("broker") || "{}");
+    const secret = "2SKOG3TLZR4ZE7U4NKS2677X4KJ54W3D";
+    const totp = authenticator.generate(secret);
+    const appKey = SHA256(`${userid}|${apiKey}`).toString();
+    const imei = "abc1234";
+    const data = {
+      uid: userid,
+      pwd: password,
+      factor2: totp,
+      vc: venderCode,
+      appkey: appKey,
+      apkversion: "1.0.0",
+      source: "API",
+      imei,
+    };
+    const jData = "jData=" + JSON.stringify(data);
+    axios
+      .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
+      .then(
+        async ({
+          data: {
+            brkname,
+            email,
+            lastaccesstime,
+            request_time,
+            uname,
+            uid,
+            brnchid,
+          },
+        }) => {
+          toast.success("OTP Verified");
+          console.log(users?.docs);
+          await addDoc(collection(db, "users"), {
+            uid: user?.uid,
+            brokers: [
+              {
+                brokerName: brkname,
+                email,
+                lastAccessTime: lastaccesstime,
+                requestTime: request_time,
+                userName: uname,
+                userId: uid,
+                branchId: brnchid,
+                password,
+                venderCode,
+                apiKey,
+                pan,
+              },
+            ],
+          });
+          // let payload =
+          //   "jData=" + JSON.stringify({ uid: data.uid, actid: data.actid });
+          // payload = payload + "&jKey=" + data.susertoken;
+          // axios
+          //   .post("https://api.shoonya.com/NorenWClientTP/Limits/", payload)
+          //   .then(({ data }) => {
+          //     console.log(data);
+          //   })
+          //   .catch((err) => {
+          //     console.error(err);
+          //   });
+          push("/broker-list");
+        }
+      )
+      .catch((err) => {
+        console.error(err);
+        toast.error("Invalid OTP");
+      });
   };
   return (
     <motion.form
       onSubmit={handleSubmitOTP(verifyOTP)}
-      key="form-otp"
+      key="form-otp-add-broker"
       variants={container}
       initial="hidden"
       animate="show"
