@@ -1,6 +1,7 @@
 import Image from "next/image";
 import landing from "../../../public/img/landing.png";
 import styled from "styled-components";
+import Link from "next/link";
 
 const Section = styled.section`
   min-height: 80vh;
@@ -63,7 +64,7 @@ const Section = styled.section`
 const Hero = () => {
   return (
     <Section>
-      <Image src={landing} alt="Tojo, no. 1 stock broker in India" />
+      <Link href="/"><Image src={landing} alt="Tojo, no. 1 stock broker in India" /></Link>
       <div className="content">
         <h2>Invest in everything</h2>
         <p>
@@ -72,6 +73,7 @@ const Hero = () => {
         </p>
       </div>
       <button>Sign up now</button>
+      <Link href="BrokerList/Index">go to add broker</Link>
     </Section>
   );
 };
