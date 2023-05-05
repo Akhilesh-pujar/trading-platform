@@ -3,13 +3,13 @@ import { ConfirmationResult } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { object, InferType, number } from "yup";
+import { object, InferType, string } from "yup";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 const otpSchema = object({
   // otp is only number and length is 6
-  otp: number()
+  otp: string()
     .required()
     .typeError("OTP is required")
     .test({
@@ -42,7 +42,7 @@ const FormOTP = ({ showOTP }: { showOTP: ConfirmationResult }) => {
       setLoading(true);
       const confirmationResult = showOTP;
       try {
-        await confirmationResult.confirm(otp.toString());
+        await confirmationResult.confirm(otp);
       } catch (err) {
         toast.error("Invalid OTP");
         setLoading(false);
