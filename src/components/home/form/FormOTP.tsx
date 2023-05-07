@@ -44,6 +44,15 @@ const FormOTP = ({ showOTP }: { showOTP: ConfirmationResult }) => {
       try {
         await confirmationResult.confirm(otp);
       } catch (err) {
+        // "FirebaseError: Firebase: Error (auth/code-expired).
+        // at createErrorInternal (webpack-internal:///./node_modules/@firebase/auth/dist/esm2017/index-eaf604ee.js:610:41)
+        // at _fail (webpack-internal:///./node_modules/@firebase/auth/dist/esm2017/index-eaf604ee.js:581:11)
+        // at _performFetchWithErrorHandling (webpack-internal:///./node_modules/@firebase/auth/dist/esm2017/index-eaf604ee.js:1024:17)
+        // at async _performSignInRequest (webpack-internal:///./node_modules/@firebase/auth/dist/esm2017/index-eaf604ee.js:1039:29)
+        // at async _signInWithCredential (webpack-internal:///./node_modules/@firebase/auth/dist/esm2017/index-eaf604ee.js:5162:22)
+        // at async verifyOTP (webpack-internal:///./src/components/home/form/FormOTP.tsx:61:17)
+        // at async eval (webpack-internal:///./node_modules/react-hook-form/dist/index.esm.mjs:2032:13)"
+        console.log({ err, otp, showOTP });
         toast.error("Invalid OTP");
         setLoading(false);
         return;

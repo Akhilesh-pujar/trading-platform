@@ -62,20 +62,17 @@ const BrokerDetails = ({
         "jData=" + JSON.stringify({ uid: userid, pan: pan.toUpperCase() })
       )
       .then(({ data }) => {
-        if (data?.stat === "Ok") {
-          let encryptedData = {
-            userid: userid,
-            pan: pan,
-            password: SHA256(password).toString(),
-            venderCode: venderCode,
-            apiKey: apiKey,
-          };
-          localStorage.setItem("broker", JSON.stringify(encryptedData));
-          toast.success("OTP sent successfully");
-          setShowOTP(true);
-        } else {
-          toast.error(data.ReqStatus);
-        }
+        let encryptedData = {
+          userid: userid,
+          pan: pan,
+          password: SHA256(password).toString(),
+          venderCode: venderCode,
+          apiKey: apiKey,
+        };
+        localStorage.setItem("broker", JSON.stringify(encryptedData));
+        toast.success("OTP sent successfully");
+        console.log(data);
+        setShowOTP(true);
       })
       .catch((err) => {
         console.log(err);
