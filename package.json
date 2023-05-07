@@ -1,5 +1,5 @@
 {
-  "name": "tojo",
+  "name": "flashcliq",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,6 @@
     "@hookform/resolvers": "^3.1.0",
     "@next-auth/firebase-adapter": "^2.0.1",
     "@types/crypto-js": "^4.1.1",
-    "@types/firebase": "^3.2.1",
     "@types/node": "18.16.0",
     "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",
@@ -22,10 +21,7 @@
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
     "firebase": "^9.21.0",
-
     "firebase-admin": "^11.7.0",
-
-
     "framer-motion": "^10.12.4",
     "next": "13.3.1",
     "next-auth": "^4.22.1",
@@ -33,10 +29,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
-
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.1",
-
     "react-icons": "^4.8.0",
     "styled-components": "^5.3.10",
     "typescript": "5.0.4",
