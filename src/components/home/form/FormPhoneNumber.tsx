@@ -13,14 +13,7 @@ import { motion } from "framer-motion";
 
 const phoneNumberSchema = object({
   // phoneNumber is only number and length is 10
-  phoneNumber: number()
-    .required()
-    .typeError("Phone number is required")
-    .test({
-      name: "len",
-      message: "Phone number must be exactly 10 digits",
-      test: (val) => val?.toString().length === 10,
-    }),
+  phoneNumber: number().min(10).max(10).required("Phone number is required"),
 });
 
 type FormDataPhoneNumber = InferType<typeof phoneNumberSchema>;
