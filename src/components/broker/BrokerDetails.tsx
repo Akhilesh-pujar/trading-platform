@@ -10,9 +10,12 @@ import axios from "axios";
 
 const brokerSchema = object({
   userid: string()
-    .required()
-    .min(7, "User ID must be at most 7 characters")
-    .max(7, "User ID must be at most 7 characters")
+    .test(
+      "len",
+      "Must be exactly 7 digits",
+      (val) => val?.toString().length === 7
+    )
+    .typeError("User ID must be exactly 7 digits")
     .required(),
   pan: string().required("Pan Number is required"),
   password: string().required("Password is required"),

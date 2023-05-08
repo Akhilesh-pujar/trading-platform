@@ -10,13 +10,13 @@ import toast from "react-hot-toast";
 const otpSchema = object({
   // otp is only number and length is 6
   otp: string()
-    .required()
-    .typeError("OTP is required")
-    .test({
-      name: "len",
-      message: "OTP must be exactly 6 digits",
-      test: (val) => val?.toString().length === 6,
-    }),
+    .test(
+      "len",
+      "Must be exactly 6 digits",
+      (val) => val?.toString().length === 6
+    )
+    .typeError("OTP must be exactly 6 digits")
+    .required(),
 });
 
 type FormDataOTP = InferType<typeof otpSchema>;

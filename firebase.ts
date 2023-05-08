@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "trading-plaform",
   storageBucket: "trading-plaform.appspot.com",
   messagingSenderId: "225380924544",
-  appId: "1:225380924544:web:e962ca28042c43371a7a65",
+  appId: "1:225380924544:web:3fafb51b02fdad2f1a7a65",
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);

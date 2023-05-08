@@ -12,14 +12,18 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 const phoneNumberSchema = object({
-  // phoneNumber is only number and length is 10
-  phoneNumber: number().min(10).max(10).required("Phone number is required"),
+  // phoneNumber is only number and exactly 10 digits
+  phoneNumber: number()
+    .test(
+      "len",
+      "Must be exactly 10 digits",
+      (val) => val?.toString().length === 10
+    )
+    .typeError("Phone number must be exactly 10 digits")
+    .required(),
 });
 
 type FormDataPhoneNumber = InferType<typeof phoneNumberSchema>;
-type Window = typeof window & {
-  recaptchaVerifier?: RecaptchaVerifier;
-};
 
 const container = {
   hidden: { opacity: 0, x: "-100vw" },
@@ -42,29 +46,35 @@ const FormPhoneNumber = ({
   });
   const sendOTP = async ({ phoneNumber }: FormDataPhoneNumber) => {
     setLoading(true);
-    const windowWithVerifier = window as Window;
     try {
-      const appVerifier = windowWithVerifier.recaptchaVerifier
-        ? windowWithVerifier.recaptchaVerifier
-        : (windowWithVerifier.recaptchaVerifier = new RecaptchaVerifier(
-            "recaptcha-container",
-            {
-              size: "invisible",
-              callback: () => {},
-              "expired-callback": () => {},
-            },
-            auth
-          ));
       const phoneNumberWithCountryCode = `+91${phoneNumber}`;
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         phoneNumberWithCountryCode,
-        appVerifier
+        new RecaptchaVerifier(
+          "recaptcha-container",
+          {
+            size: "visible",
+            callback: () => {},
+            "expired-callback": () => {},
+          },
+          auth
+        )
       );
       setShowOTP(confirmationResult);
       toast.success("OTP is sent successfully!");
     } catch (err) {
+      console.log(err);
+      // FirebaseError: Firebase: Error (auth/operation-not-allowed).
+      //   at createErrorInternal (index-eaf604ee.js:497:1)
+      //   at _fail (index-eaf604ee.js:468:1)
+      //   at _performFetchWithErrorHandling (index-eaf604ee.js:911:1)
+      //   at async _verifyPhoneNumber (index-eaf604ee.js:8042:35)
+      //   at async signInWithPhoneNumber (index-eaf604ee.js:7960:1)
+      //   at async sendOTP (FormPhoneNumber.tsx:64:34)
+      //   at async eval (index.esm.mjs:2017:1)
       toast.error("Something went wrong!");
+      setLoading(false);
     }
   };
   return (
