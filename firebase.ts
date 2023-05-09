@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXstsZfJ-7uEujulpGcZEwPN--CxmY_qg",
-  authDomain: "trading-plaform.firebaseapp.com",
-  projectId: "trading-plaform",
-  storageBucket: "trading-plaform.appspot.com",
-  messagingSenderId: "225380924544",
-  appId: "1:225380924544:web:3fafb51b02fdad2f1a7a65",
+  apiKey: "AIzaSyAd6yyeu2E_cTN9uXX1KZBSlzX56QN7xzo",
+  authDomain: "flashcliq.firebaseapp.com",
+  projectId: "flashcliq",
+  storageBucket: "flashcliq.appspot.com",
+  messagingSenderId: "820950819897",
+  appId: "1:820950819897:web:e962a6505c37ca538419e8"
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);

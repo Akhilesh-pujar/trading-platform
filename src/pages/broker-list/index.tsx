@@ -21,16 +21,14 @@ const BrokerListStyled = styled.div`
 
 const BrokerList = () => {
   const [user] = useAuthState(auth);
-  const [users] = useCollection(collection(db, "users"), {
-    snapshotListenOptions: { includeMetadataChanges: false },
-  });
+  const [users] = useCollection(collection(db, "users"));
   const brokers: BrokerDetail[] = users?.docs
     .map((doc) => doc.data())
     .find((userFirestore) => userFirestore.uid === user?.uid)?.brokers;
   return (
     <BrokerListStyled>
-      <BrokerListTop />
-      <BrokerTable brokerDetails={brokers} />
+      <BrokerListTop brokersExist={!!brokers?.length} />
+      <BrokerTable brokersDetails={brokers} />
     </BrokerListStyled>
   );
 };
@@ -51,11 +49,11 @@ const BrokerListTopStyled = styled.div`
   }
 `;
 
-const BrokerListTop = () => {
+const BrokerListTop = ({ brokersExist }: { brokersExist: boolean }) => {
   return (
     <BrokerListTopStyled className="container">
       <Link href="/broker-list/add">Add Broker</Link>
-      <Link href="/trade">Open 1 Cliq Trade Window</Link>
+      {brokersExist && <Link href="/trade">Open 1 Cliq Trade Window</Link>}
     </BrokerListTopStyled>
   );
 };
