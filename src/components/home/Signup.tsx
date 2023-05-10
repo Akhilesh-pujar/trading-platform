@@ -182,13 +182,6 @@ const Signup = () => {
       </div>
       <div className="form-container">
         <Image src={accountOpen} alt="FlashCliq, no. 1 stock broker in India" />
-        {/* <form>
-          <div className="form-top">
-            <h2>Signup now</h2>
-            <p>Or track your existing application</p>
-          </div>
-          <div className="providers"></div>
-        </form> */}
         {!showOTP ? (
           <AnimatePresence mode="wait">
             <FormPhoneNumber setShowOTP={setShowOTP} />

@@ -65,14 +65,6 @@ const FormPhoneNumber = ({
       toast.success("OTP is sent successfully!");
     } catch (err) {
       console.log(err);
-      // FirebaseError: Firebase: Error (auth/operation-not-allowed).
-      //   at createErrorInternal (index-eaf604ee.js:497:1)
-      //   at _fail (index-eaf604ee.js:468:1)
-      //   at _performFetchWithErrorHandling (index-eaf604ee.js:911:1)
-      //   at async _verifyPhoneNumber (index-eaf604ee.js:8042:35)
-      //   at async signInWithPhoneNumber (index-eaf604ee.js:7960:1)
-      //   at async sendOTP (FormPhoneNumber.tsx:64:34)
-      //   at async eval (index.esm.mjs:2017:1)
       toast.error("Something went wrong!");
       setLoading(false);
     }

@@ -59,10 +59,7 @@ const BrokerListTop = ({ brokersExist }: { brokersExist: boolean }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  console.log(req.cookies);
-  return !Object.keys(req.cookies).length
-    ? { redirect: { destination: "/", permanent: false } }
-    : { props: {} };
+  return { props: {} };
 };
 
 BrokerList.getLayout = function pageLayout(page: ReactElement) {
