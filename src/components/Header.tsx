@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import styled from "styled-components";
+import rocket from "./../../public/icon/rocket.png";
 
 const HeaderStyle = styled.header`
   position: fixed;
@@ -22,6 +24,8 @@ const HeaderStyle = styled.header`
       align-items: center;
       gap: 2rem;
       & h1 {
+        display: flex;
+        gap: 0.5rem;
         position: relative;
         font-size: 1.5rem;
         font-weight: 600;
@@ -130,7 +134,9 @@ const Header = () => {
     <HeaderStyle>
       <div className="navbar container">
         <div className="links">
-          <h1>FlashCliq</h1>
+          <h1>
+            FlashCliq <Image src={rocket} alt=""></Image>
+          </h1>
           <ul>
             <li>
               <Link href="/#home">Home</Link>

@@ -25,12 +25,15 @@ const Section = styled.section`
     & h2 {
       font-size: 2.75rem;
       font-weight: 600;
+      @media screen and (width < 50rem) {
+        font-size: 2rem;
+      }
     }
     & p {
       font-size: 1.25rem;
     }
   }
-  & button {
+  & a {
     font-size: 1rem;
     font-weight: 500;
     color: rgb(var(--light-color));
@@ -63,8 +66,8 @@ const Section = styled.section`
 
 const Hero = () => {
   return (
-    <Section>
-      <Link href="/"><Image src={landing} alt="Tojo, no. 1 stock broker in India" /></Link>
+    <Section className="container">
+      <Image src={landing} alt="Tojo, no. 1 stock broker in India" />
       <div className="content">
         <h2>Invest in everything</h2>
         <p>
@@ -72,8 +75,7 @@ const Hero = () => {
           more
         </p>
       </div>
-      <button>Sign up now</button>
-      <Link href="BrokerList/Index">go to add broker</Link>
+      <Link href="#">Sign up now</Link>
     </Section>
   );
 };

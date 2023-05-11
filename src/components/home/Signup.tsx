@@ -50,12 +50,18 @@ const Section = styled.section`
       justify-content: flex-start;
       align-items: flex-start;
       gap: 1rem;
+      @media screen and (width < 50rem) {
+        align-items: center;
+      }
       & .form-top {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
         gap: 0.5rem;
+        @media screen and (width < 50rem) {
+          align-items: center;
+        }
         & h2 {
           font-size: 2rem;
           font-weight: 500;

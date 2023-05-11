@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
   :root{
     --light-color: 255, 255, 255;
     --dark-color: 66, 66, 66;
-    --primary-color: 56, 126, 209;
+    --primary-color: 136, 140, 27;
     --secondary-color: 253, 192, 102;
     --success-color: 3, 179, 10;
     --danger-color: 255, 0, 0;
