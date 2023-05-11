@@ -20,11 +20,15 @@ const GlobalStyle = createGlobalStyle`
     --dark-color: 66, 66, 66;
     --primary-color: 56, 126, 209;
     --secondary-color: 253, 192, 102;
+    --success-color: 3, 179, 10;
     --danger-color: 255, 0, 0;
     scroll-behavior: smooth;
   }
   ::-webkit-scrollbar {
     width: 0;
+  }
+  html {
+    color-scheme: light;
   }
   html, body {
     overflow-x: hidden;

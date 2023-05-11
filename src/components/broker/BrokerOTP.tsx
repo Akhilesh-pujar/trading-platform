@@ -81,26 +81,16 @@ const BrokerOTP = () => {
       .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
       .then(
         async ({
-          data: {
-            brkname,
-            email,
-            lastaccesstime,
-            request_time,
-            uname,
-            uid,
-            brnchid,
-          },
+          data: { brkname, email, request_time, uname, uid, brnchid },
         }) => {
           toast.success("OTP Verified");
-          console.log(users?.docs);
           await addDoc(collection(db, "users"), {
             uid: user?.uid,
             brokers: [
               {
                 brokerName: brkname,
                 email,
-                lastAccessTime: lastaccesstime,
-                requestTime: request_time,
+                lastAccessTime: new Date().getTime(),
                 userName: uname,
                 userId: uid,
                 branchId: brnchid,
