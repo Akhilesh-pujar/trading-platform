@@ -51,36 +51,36 @@ const BrokerDetails = ({
     venderCode,
   }: FormDataBroker) => {
     setShowOTP(true);
-    let encryptedData = {
-      userid: userid,
-      pan: pan,
-      password: SHA256(password).toString(),
-      venderCode: venderCode,
-      apiKey: apiKey,
-    };
-    localStorage.setItem("broker", JSON.stringify(encryptedData));
-    // await axios
-    //   .post(
-    //     "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP",
-    //     "jData=" + JSON.stringify({ uid: userid, pan: pan.toUpperCase() })
-    //   )
-    //   .then(({ data }) => {
-    //     let encryptedData = {
-    //       userid: userid,
-    //       pan: pan,
-    //       password: SHA256(password).toString(),
-    //       venderCode: venderCode,
-    //       apiKey: apiKey,
-    //     };
-    //     localStorage.setItem("broker", JSON.stringify(encryptedData));
-    //     toast.success("OTP sent successfully");
-    //     console.log(data);
-    //     setShowOTP(true);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     toast.error("Something went Wrong");
-    //   });
+    // let encryptedData = {
+    //   userid: userid,
+    //   pan: pan,
+    //   password: SHA256(password).toString(),
+    //   venderCode: venderCode,
+    //   apiKey: apiKey,
+    // };
+    // localStorage.setItem("broker", JSON.stringify(encryptedData));
+    await axios
+      .post(
+        "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP",
+        "jData=" + JSON.stringify({ uid: userid, pan: pan.toUpperCase() })
+      )
+      .then(({ data }) => {
+        let encryptedData = {
+          userid: userid,
+          pan: pan,
+          password: SHA256(password).toString(),
+          venderCode: venderCode,
+          apiKey: apiKey,
+        };
+        localStorage.setItem("broker", JSON.stringify(encryptedData));
+        toast.success("OTP sent successfully");
+        console.log(data);
+        setShowOTP(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Something went Wrong");
+      });
   };
   return (
     <motion.form

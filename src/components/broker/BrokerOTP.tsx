@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { SHA256 } from "crypto-js";
 import axios from "axios";
-import { authenticator } from "otplib";
+// import { authenticator } from "otplib";
 import { toast } from "react-hot-toast";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -62,14 +62,15 @@ const BrokerOTP = () => {
       venderCode: string;
       apiKey: string;
     } = JSON.parse(localStorage.getItem("broker") || "{}");
-    const secret = "2SKOG3TLZR4ZE7U4NKS2677X4KJ54W3D";
-    const totp = authenticator.generate(secret);
+    // const secret = "2SKOG3TLZR4ZE7U4NKS2677X4KJ54W3D";
+    // const totp = authenticator.generate(secret);
     const appKey = SHA256(`${userid}|${apiKey}`).toString();
     const imei = "abc1234";
     const data = {
       uid: userid,
       pwd: password,
-      factor2: totp,
+      // factor2: totp,
+      factor2: otp,
       vc: venderCode,
       appkey: appKey,
       apkversion: "1.0.0",
