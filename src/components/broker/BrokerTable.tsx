@@ -3,6 +3,9 @@ import { BrokerDetail } from "../../../BrokerDetail";
 import { RxCrossCircled } from "react-icons/rx";
 import { IoPlayOutline } from "react-icons/io5";
 import Link from "next/link";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const TableStyled = styled.table`
   border-radius: 1rem;
@@ -31,6 +34,7 @@ const TableStyled = styled.table`
     }
     & span {
       &.success {
+        width: fit-content;
         background-color: rgb(var(--success-color));
         color: rgb(var(--light-color));
         padding: 0.25rem 0.5rem;
@@ -80,6 +84,7 @@ const BrokerTable = ({
 }: {
   brokersDetails: BrokerDetail[];
 }) => {
+  const router = useRouter();
   if (!!brokersDetails?.length) {
     return (
       <TableStyled className="container">
@@ -98,7 +103,14 @@ const BrokerTable = ({
           .fill(0)
           .map((_, index) =>
             brokersDetails?.map(
-              ({ apiKey, brokerName, lastAccessTime, userName, userId }) => (
+              ({
+                apiKey,
+                brokerName,
+                lastAccessTime,
+                userName,
+                userId,
+                pan,
+              }) => (
                 <tr key={userId} role="row">
                   <td role="cell" data-cell="Serial No.">
                     {index + 1}
@@ -124,11 +136,37 @@ const BrokerTable = ({
                     {new Date(lastAccessTime).toLocaleString().toUpperCase()}
                   </td>
                   <td role="cell" data-cell="Generate Token" className="token">
-                    <Link href="/tokengenerate">Click to Generate Token</Link>
+                    <Link
+                      href="/broker-list/tokengenerate"
+                      onClick={async () => {
+                        await axios
+                          .post(
+                            "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
+                            "jData=" +
+                              JSON.stringify({
+                                uid: userId,
+                                pan: pan.toUpperCase(),
+                              })
+                          )
+                          .then(({ data }) => {
+                            toast.success("OTP sent successfully");
+                            console.log(data);
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                            toast.error("Something went Wrong");
+                            router.push("/broker-list");
+                          });
+                      }}
+                    >
+                      Click to Generate Token
+                    </Link>
                   </td>
                   <td role="cell" data-cell="Action" className="action">
-                    <IoPlayOutline color="rgb(var(--success-color))" />
-                    <RxCrossCircled color="rgb(var(--danger-color))" />
+                    <span className="action">
+                      <IoPlayOutline color="rgb(var(--success-color))" />
+                      <RxCrossCircled color="rgb(var(--danger-color))" />
+                    </span>
                   </td>
                 </tr>
               )

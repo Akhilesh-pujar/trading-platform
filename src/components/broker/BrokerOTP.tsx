@@ -79,31 +79,27 @@ const BrokerOTP = () => {
     const jData = "jData=" + JSON.stringify(data);
     axios
       .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
-      .then(
-        async ({
-          data: { brkname, email, request_time, uname, uid, brnchid },
-        }) => {
-          toast.success("OTP Verified");
-          await addDoc(collection(db, "users"), {
-            uid: user?.uid,
-            brokers: [
-              {
-                brokerName: brkname,
-                email,
-                lastAccessTime: new Date().getTime(),
-                userName: uname,
-                userId: uid,
-                branchId: brnchid,
-                password,
-                venderCode,
-                apiKey,
-                pan,
-              },
-            ],
-          });
-          push("/broker-list");
-        }
-      )
+      .then(async ({ data: { brkname, email, uname, uid, brnchid } }) => {
+        toast.success("OTP Verified");
+        await addDoc(collection(db, "users"), {
+          uid: user?.uid,
+          brokers: [
+            {
+              brokerName: brkname,
+              email,
+              lastAccessTime: new Date().getTime(),
+              userName: uname,
+              userId: uid,
+              branchId: brnchid,
+              password,
+              venderCode,
+              apiKey,
+              pan,
+            },
+          ],
+        });
+        push("/broker-list");
+      })
       .catch((err) => {
         console.error(err);
         toast.error("Invalid OTP");
