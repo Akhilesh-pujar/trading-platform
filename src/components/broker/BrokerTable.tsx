@@ -193,7 +193,14 @@ const BrokerTable = ({
     );
   } else {
     return (
-      <div style={{ display: "grid", placeItems: "center", height: "70vh" }}>
+      <div
+        style={{
+          display: "grid",
+          placeItems: "center",
+          height: "70vh",
+          alignContent: "center",
+        }}
+      >
         <h2>No Broker Found!</h2>
         <p>Please Add New Broker</p>
       </div>
