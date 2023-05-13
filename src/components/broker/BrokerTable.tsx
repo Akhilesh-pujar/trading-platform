@@ -81,6 +81,9 @@ const TableStyled = styled.table`
       &::before {
         content: attr(data-cell) ": ";
       }
+      &.action span {
+        justify-content: unset;
+      }
     }
     & th,
     td {
