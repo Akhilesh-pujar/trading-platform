@@ -1,7 +1,7 @@
 import BrokerTable from "@/components/broker/BrokerTable";
 import { collection } from "firebase/firestore";
 import Link from "next/link";
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
 import { auth, db } from "../../../firebase";
@@ -23,7 +23,7 @@ const BrokerListStyled = styled.div`
 
 const BrokerList = () => {
   const [user, loading, error] = useAuthState(auth);
-  const [users] = useCollection(collection(db, "users"));
+  const [users, , usersError] = useCollection(collection(db, "users"));
   const brokers: BrokerDetail[] = users?.docs
     .map((doc) => doc.data())
     .find((userFirestore) => userFirestore.uid === user?.uid)?.brokers;
@@ -37,9 +37,9 @@ const BrokerList = () => {
       return;
     }
   }, [error, loading, router, user]);
-  if (!!loading) {
+  if (!!loading || (!brokers?.length && !usersError)) {
     return <BrokerListSkeleton />;
-  } else if (!!user?.uid) {
+  } else if (!!user?.uid && !!brokers?.length) {
     return (
       <BrokerListStyled>
         <BrokerListTop brokersExist={!!brokers?.length} />
@@ -56,20 +56,39 @@ const BrokerListTopStyled = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  & a {
-    display: inline-block;
+  & :where(a, button) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
     padding: 0.75rem 1.25rem;
     border-radius: 5rem;
     background-color: rgb(var(--primary-color));
     color: rgb(var(--light-color));
+    &[aria-disabled="true"] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 `;
 
 const BrokerListTop = ({ brokersExist }: { brokersExist: boolean }) => {
+  const [loading, setLoading] = useState(false);
   return (
     <BrokerListTopStyled className="container">
-      <Link href="/broker-list/add">Add Broker</Link>
-      {brokersExist && <Link href="/trade">Open 1 Cliq Trade Window</Link>}
+      <Link
+        href="/broker-list/add"
+        onClick={() => setLoading(true)}
+        aria-disabled={loading}
+      >
+        {!!loading && <span className="loader" />} Add Broker
+      </Link>
+      {brokersExist && (
+        <button onClick={() => window.open("/trade", "", "popup")}>
+          Open 1 Cliq Trade Window
+        </button>
+      )}
     </BrokerListTopStyled>
   );
 };

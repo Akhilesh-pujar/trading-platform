@@ -2,10 +2,11 @@ import styled from "styled-components";
 import { BrokerDetail } from "../../../BrokerDetail";
 import { RxCrossCircled } from "react-icons/rx";
 import { IoPlayOutline } from "react-icons/io5";
-import Link from "next/link";
-import axios from "axios";
+import { CiPause1 } from "react-icons/ci";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const TableStyled = styled.table`
   border-radius: 1rem;
@@ -22,14 +23,23 @@ const TableStyled = styled.table`
     background-color: rgb(var(--dark-color), 0.25);
   }
   & td {
-    &.action {
+    &.action span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
       font-size: 1.25rem;
+      user-select: none;
+      & svg {
+        cursor: pointer;
+      }
     }
     &.token {
-      & a {
+      & span {
         color: rgb(var(--danger-color));
         font-weight: 200;
         font-size: 0.9rem;
+        cursor: pointer;
       }
     }
     & span {
@@ -136,37 +146,35 @@ const BrokerTable = ({
                     {new Date(lastAccessTime).toLocaleString().toUpperCase()}
                   </td>
                   <td role="cell" data-cell="Generate Token" className="token">
-                    <Link
-                      href="/broker-list/tokengenerate"
+                    <span
                       onClick={async () => {
-                        await axios
-                          .post(
-                            "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
-                            "jData=" +
-                              JSON.stringify({
-                                uid: userId,
-                                pan: pan.toUpperCase(),
-                              })
-                          )
-                          .then(({ data }) => {
-                            toast.success("OTP sent successfully");
-                            console.log(data);
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                            toast.error("Something went Wrong");
+                        const requestOTP = axios.post(
+                          "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
+                          "jData=" +
+                            JSON.stringify({
+                              uid: userId,
+                              pan: pan.toUpperCase(),
+                            })
+                        );
+                        toast.promise(requestOTP, {
+                          loading: "Loading...",
+                          success: () => {
+                            router.push("/broker-list/token");
+                            return "Token Generated Successfully";
+                          },
+                          error: (error: AxiosError) => {
+                            console.log(error);
                             router.push("/broker-list");
-                          });
+                            return "Something Went Wrong";
+                          },
+                        });
                       }}
                     >
                       Click to Generate Token
-                    </Link>
+                    </span>
                   </td>
                   <td role="cell" data-cell="Action" className="action">
-                    <span className="action">
-                      <IoPlayOutline color="rgb(var(--success-color))" />
-                      <RxCrossCircled color="rgb(var(--danger-color))" />
-                    </span>
+                    <Action />
                   </td>
                 </tr>
               )
@@ -185,3 +193,23 @@ const BrokerTable = ({
 };
 
 export default BrokerTable;
+
+const Action = () => {
+  const [play, setPlay] = useState(false);
+  return (
+    <span>
+      {!play ? (
+        <IoPlayOutline
+          color="rgb(var(--success-color))"
+          onClick={() => setPlay(true)}
+        />
+      ) : (
+        <CiPause1
+          color="rgb(var(--secondary-color))"
+          onClick={() => setPlay(false)}
+        />
+      )}
+      <RxCrossCircled color="rgb(var(--danger-color))" />
+    </span>
+  );
+};

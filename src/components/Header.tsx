@@ -2,6 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import styled from "styled-components";
 import rocket from "./../../public/icon/rocket.png";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase";
+import HeaderSkeleton from "./skeleton/HeaderSkeleton";
 
 const HeaderStyle = styled.header`
   position: fixed;
@@ -130,6 +133,7 @@ const HeaderStyle = styled.header`
 `;
 
 const Header = () => {
+  const [user, loading, error] = useAuthState(auth);
   return (
     <HeaderStyle>
       <div className="navbar container">
@@ -153,7 +157,15 @@ const Header = () => {
           </ul>
         </div>
         <div className="icons">
-          <Link href="/signup">Get Started</Link>
+          {!!loading ? (
+            <HeaderSkeleton />
+          ) : !!error ? (
+            <Link href="/signup">Get Started</Link>
+          ) : !!user ? (
+            <Link href="/broker-list">Dashboard</Link>
+          ) : (
+            <Link href="/signup">Get Started</Link>
+          )}
         </div>
       </div>
     </HeaderStyle>

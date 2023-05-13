@@ -185,11 +185,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-{
-  /* <div className="col">
-  <Link href="/dashboard" className="dashboard">
-    Dashboard
-  </Link>
-</div> */
-}

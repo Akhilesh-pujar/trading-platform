@@ -142,37 +142,6 @@ const Section = styled.section`
           box-shadow: none;
           animation-play-state: paused;
         }
-        & span.loader {
-          width: 1rem;
-          height: 1rem;
-          display: inline-block;
-          position: relative;
-          &::after,
-          &::before {
-            content: "";
-            box-sizing: border-box;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            position: absolute;
-            inset: -0.25rem;
-            animation: animloader 2s linear infinite;
-          }
-          &::after {
-            animation-delay: 1s;
-          }
-          @keyframes animloader {
-            0% {
-              transform: scale(0);
-              opacity: 1;
-            }
-            100% {
-              transform: scale(1);
-              opacity: 0;
-            }
-          }
-        }
       }
     }
   }

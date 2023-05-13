@@ -102,7 +102,7 @@ const FormPhoneNumber = ({
       )}
       <div id="recaptcha-container"></div>
       <button type="submit" disabled={loading}>
-        {loading && <span className="loader"></span>}
+        {loading && <span className="loader" />}
         Get OTP
       </button>
     </motion.form>
