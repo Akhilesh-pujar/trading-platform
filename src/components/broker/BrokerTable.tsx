@@ -143,7 +143,16 @@ const BrokerTable = ({
                     <span className="success">Active</span>
                   </td>
                   <td role="cell" data-cell="Last Access Time">
-                    {new Date(lastAccessTime).toLocaleString().toUpperCase()}
+                    {new Intl.DateTimeFormat("en-IN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })
+                      .format(new Date(lastAccessTime))
+                      .replace(/\//g, ".")}
                   </td>
                   <td role="cell" data-cell="Generate Token" className="token">
                     <span
@@ -184,10 +193,10 @@ const BrokerTable = ({
     );
   } else {
     return (
-      <>
+      <div style={{ display: "grid", placeItems: "center", height: "70vh" }}>
         <h2>No Broker Found!</h2>
         <p>Please Add New Broker</p>
-      </>
+      </div>
     );
   }
 };
