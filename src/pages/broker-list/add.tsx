@@ -1,9 +1,13 @@
 import BrokerDetails from "@/components/broker/BrokerDetails";
 import BrokerOTP from "@/components/broker/BrokerOTP";
 import { AnimatePresence } from "framer-motion";
-import { GetServerSideProps } from "next";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import styled from "styled-components";
+import { BrokerType } from "../../../types/Broker";
+import { auth } from "../../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { toast } from "react-hot-toast";
 
 const AddBrokerStyled = styled.div`
   color: rgb(var(--dark-color), 0.5);
@@ -81,7 +85,7 @@ const AddBrokerStyled = styled.div`
         font-size: 0.75rem;
       }
     }
-    & .buttons {
+    /* & .buttons {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -113,21 +117,33 @@ const AddBrokerStyled = styled.div`
           color: rgb(var(--light-color));
         }
       }
-    }
+    } */
   }
 `;
 
 const AddBroker = () => {
+  const [user, loading, error] = useAuthState(auth);
   const [showOTP, setShowOTP] = useState<boolean>(false);
+  const [broker, setBroker] = useState<BrokerType>({} as BrokerType);
+  const router = useRouter();
+  useEffect(() => {
+    if (!loading && (!user?.uid || error)) {
+      if (error) {
+        toast.error("Something Went Wrong");
+      }
+      router.push("/");
+      return;
+    }
+  }, [error, loading, router, user?.uid]);
   return (
     <AddBrokerStyled className="container">
       {!showOTP ? (
         <AnimatePresence mode="wait">
-          <BrokerDetails setShowOTP={setShowOTP} />
+          <BrokerDetails setShowOTP={setShowOTP} setBroker={setBroker} />
         </AnimatePresence>
       ) : (
         <AnimatePresence mode="wait">
-          <BrokerOTP />
+          <BrokerOTP broker={broker} setShowOTP={setShowOTP} />
         </AnimatePresence>
       )}
     </AddBrokerStyled>
@@ -135,13 +151,6 @@ const AddBroker = () => {
 };
 
 export default AddBroker;
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  console.log(req.cookies);
-  return !Object.keys(req.cookies).length
-    ? { redirect: { destination: "/", permanent: false } }
-    : { props: {} };
-};
 
 AddBroker.getLayout = function pageLayout(page: ReactElement) {
   return <>{page}</>;

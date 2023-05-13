@@ -11,7 +11,9 @@ import { toast } from "react-hot-toast";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { addDoc, collection } from "firebase/firestore";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { BrokerType } from "../../../types/Broker";
+import { Dispatch, SetStateAction } from "react";
+import ButtonGroup from "../buttons/ButtonGroup";
 
 const otpSchema = object({
   // otp is only number and length is 6
@@ -33,11 +35,15 @@ const container = {
   exit: { opacity: 0, x: "100vw" },
 };
 
-const BrokerOTP = () => {
+const BrokerOTP = ({
+  broker,
+  setShowOTP,
+}: {
+  broker: BrokerType;
+  setShowOTP: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { push } = useRouter();
-  // get the user details from firebase
   const [user] = useAuthState(auth);
-  const [users] = useCollection(collection(db, "users"));
   const {
     register: registerOTP,
     handleSubmit: handleSubmitOTP,
@@ -49,21 +55,9 @@ const BrokerOTP = () => {
     // const password = sha256("Shan@1234").toString();
     // const userid = "FA97180";
     // const apiSecret = "0d14c648394ca23897d46627fe7e08a8";
-    const {
-      pan,
-      userid,
-      password,
-      venderCode,
-      apiKey,
-    }: {
-      pan: string;
-      userid: string;
-      password: string;
-      venderCode: string;
-      apiKey: string;
-    } = JSON.parse(localStorage.getItem("broker") || "{}");
     // const secret = "2SKOG3TLZR4ZE7U4NKS2677X4KJ54W3D";
     // const totp = authenticator.generate(secret);
+    const { pan, userid, password, venderCode, apiKey }: BrokerType = broker;
     const appKey = SHA256(`${userid}|${apiKey}`).toString();
     const imei = "abc1234";
     const data = {
@@ -124,10 +118,18 @@ const BrokerOTP = () => {
         <label htmlFor="otp">OTP</label>
         <p className="error">{errorsOTP.otp?.message}</p>
       </div>
-      <div className="buttons">
+      {/* <div className="buttons">
         <button type="submit">Verify OTP</button>
-        <Link href="/broker-list">Cancel</Link>
-      </div>
+        <button type="button" onClick={() => setShowOTP(false)}>
+          Cancel
+        </button>
+      </div> */}
+      <ButtonGroup>
+        <button type="submit">Verify OTP</button>
+        <button type="button" onClick={() => setShowOTP(false)}>
+          Cancel
+        </button>
+      </ButtonGroup>
     </motion.form>
   );
 };

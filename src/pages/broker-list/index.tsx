@@ -6,7 +6,7 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { BrokerDetail } from "../../../BrokerDetail";
+import { BrokerDetailType } from "../../../types/BrokerDetail";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import BrokerListSkeleton from "@/components/skeleton/BrokerListSkeleton";
@@ -23,8 +23,10 @@ const BrokerListStyled = styled.div`
 
 const BrokerList = () => {
   const [user, loading, error] = useAuthState(auth);
-  const [users, , usersError] = useCollection(collection(db, "users"));
-  const brokers: BrokerDetail[] = users?.docs
+  const [users, usersLoading, usersError] = useCollection(
+    collection(db, "users")
+  );
+  const brokers: BrokerDetailType[] = users?.docs
     .map((doc) => doc.data())
     .find((userFirestore) => userFirestore.uid === user?.uid)?.brokers;
   const router = useRouter();
@@ -36,17 +38,16 @@ const BrokerList = () => {
       router.push("/");
       return;
     }
-  }, [error, loading, router, user]);
-  if (!!loading || (!brokers?.length && !usersError)) {
+  }, [error, loading, router, user?.uid]);
+  if (!!loading || !!usersError || !!usersLoading) {
     return <BrokerListSkeleton />;
-  } else if (!!user?.uid && !!brokers?.length) {
-    return (
-      <BrokerListStyled>
-        <BrokerListTop brokersExist={!!brokers?.length} />
-        <BrokerTable brokersDetails={brokers} />
-      </BrokerListStyled>
-    );
   }
+  return (
+    <BrokerListStyled>
+      <BrokerListTop brokersExist={!!brokers} />
+      <BrokerTable brokersDetails={brokers} />
+    </BrokerListStyled>
+  );
 };
 
 export default BrokerList;

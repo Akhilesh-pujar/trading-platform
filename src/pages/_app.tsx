@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createGlobalStyle } from "styled-components";
 import { motion } from "framer-motion";
-import { Page } from "../../page";
+import { Page } from "../../types/page";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({

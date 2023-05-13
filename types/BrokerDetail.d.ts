@@ -1,4 +1,4 @@
-export type BrokerDetail = {
+export type BrokerDetailType = {
   brokerName: string;
   email: string;
   lastAccessTime: string;

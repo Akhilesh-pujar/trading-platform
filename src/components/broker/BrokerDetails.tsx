@@ -2,11 +2,13 @@ import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { InferType, object, string } from "yup";
+import { object, string } from "yup";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { SHA256 } from "crypto-js";
 import axios from "axios";
+import { BrokerType } from "./../../../types/Broker";
+import ButtonGroup from "./../buttons/ButtonGroup";
 
 const brokerSchema = object({
   userid: string()
@@ -23,8 +25,6 @@ const brokerSchema = object({
   apiKey: string().required("API Key is required"),
 });
 
-type FormDataBroker = InferType<typeof brokerSchema>;
-
 const container = {
   hidden: { opacity: 0, x: "-100vw" },
   show: { opacity: 1, x: 0 },
@@ -33,14 +33,16 @@ const container = {
 
 const BrokerDetails = ({
   setShowOTP,
+  setBroker,
 }: {
   setShowOTP: Dispatch<SetStateAction<boolean>>;
+  setBroker: Dispatch<SetStateAction<BrokerType>>;
 }) => {
   const {
     register: registerBroker,
     handleSubmit: handleSubmitBroker,
     formState: { errors: errorsBroker },
-  } = useForm<FormDataBroker>({
+  } = useForm<BrokerType>({
     resolver: yupResolver(brokerSchema),
   });
   const sendOTP = async ({
@@ -49,7 +51,7 @@ const BrokerDetails = ({
     pan,
     password,
     venderCode,
-  }: FormDataBroker) => {
+  }: BrokerType) => {
     setShowOTP(true);
     // let encryptedData = {
     //   userid: userid,
@@ -72,7 +74,8 @@ const BrokerDetails = ({
           venderCode: venderCode,
           apiKey: apiKey,
         };
-        localStorage.setItem("broker", JSON.stringify(encryptedData));
+        // localStorage.setItem("broker", JSON.stringify(encryptedData));
+        setBroker(encryptedData);
         toast.success("OTP sent successfully");
         console.log(data);
         setShowOTP(true);
@@ -130,10 +133,10 @@ const BrokerDetails = ({
         <label htmlFor="apiKey">API Key</label>
         <p className="error">{errorsBroker.apiKey?.message}</p>
       </div>
-      <div className="buttons">
+      <ButtonGroup>
         <button type="submit">Get OTP</button>
         <Link href="/broker-list">Cancel</Link>
-      </div>
+      </ButtonGroup>
     </motion.form>
   );
 };

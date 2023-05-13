@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BrokerDetail } from "../../../BrokerDetail";
+import { BrokerDetailType } from "../../../types/BrokerDetail";
 import { RxCrossCircled } from "react-icons/rx";
 import { IoPlayOutline } from "react-icons/io5";
 import { CiPause1 } from "react-icons/ci";
@@ -92,7 +92,7 @@ const TableStyled = styled.table`
 const BrokerTable = ({
   brokersDetails,
 }: {
-  brokersDetails: BrokerDetail[];
+  brokersDetails: BrokerDetailType[];
 }) => {
   const router = useRouter();
   if (!!brokersDetails?.length) {

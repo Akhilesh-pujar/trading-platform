@@ -159,12 +159,10 @@ const Header = () => {
         <div className="icons">
           {!!loading ? (
             <HeaderSkeleton />
-          ) : !!error ? (
+          ) : !!error || !user ? (
             <Link href="/signup">Get Started</Link>
-          ) : !!user ? (
-            <Link href="/broker-list">Dashboard</Link>
           ) : (
-            <Link href="/signup">Get Started</Link>
+            !!user && <Link href="/broker-list">Trade</Link>
           )}
         </div>
       </div>
