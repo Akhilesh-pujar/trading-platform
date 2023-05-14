@@ -98,100 +98,106 @@ const BrokerTable = ({
   brokersDetails: BrokerDetailType[];
 }) => {
   const router = useRouter();
+  const hideString = (str: string) =>
+    `${str.substring(0, 2)}***${str.substring(str.length - 2)}`;
   if (!!brokersDetails?.length) {
     return (
       <TableStyled className="container">
-        <tr role="rowheader">
-          <th></th>
-          <th>Broker</th>
-          <th>Broker ID</th>
-          <th>Name</th>
-          <th>API Key</th>
-          <th>Status</th>
-          <th>Last Access Time</th>
-          <th>Generate Token</th>
-          <th>Action</th>
-        </tr>
-        {Array(20)
-          .fill(0)
-          .map((_, index) =>
-            brokersDetails?.map(
-              ({
-                apiKey,
-                brokerName,
-                lastAccessTime,
-                userName,
-                userId,
-                pan,
-              }) => (
-                <tr key={userId} role="row">
-                  <td role="cell" data-cell="Serial No.">
-                    {index + 1}
-                  </td>
-                  <td role="cell" data-cell="Broker">
-                    {brokerName}
-                  </td>
-                  <td role="cell" data-cell="Broker ID">
-                    {userId.substring(0, 2)}***
-                    {userId.substring(userId.length - 2)}
-                  </td>
-                  <td role="cell" data-cell="Name">
-                    {userName}
-                  </td>
-                  <td role="cell" data-cell="API Key">
-                    {apiKey.substring(0, 2)}***
-                    {apiKey.substring(apiKey.length - 2)}
-                  </td>
-                  <td role="cell" data-cell="Status">
-                    <span className="success">Active</span>
-                  </td>
-                  <td role="cell" data-cell="Last Access Time">
-                    {new Intl.DateTimeFormat("en-IN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    })
-                      .format(new Date(lastAccessTime))
-                      .replace(/\//g, ".")}
-                  </td>
-                  <td role="cell" data-cell="Generate Token" className="token">
-                    <span
-                      onClick={async () => {
-                        const requestOTP = axios.post(
-                          "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
-                          "jData=" +
-                            JSON.stringify({
-                              uid: userId,
-                              pan: pan.toUpperCase(),
-                            })
-                        );
-                        toast.promise(requestOTP, {
-                          loading: "Loading...",
-                          success: () => {
-                            router.push("/broker-list/token");
-                            return "Token Generated Successfully";
-                          },
-                          error: (error: AxiosError) => {
-                            console.log(error);
-                            router.push("/broker-list");
-                            return "Something Went Wrong";
-                          },
-                        });
-                      }}
+        <tbody>
+          <tr role="rowheader">
+            <th></th>
+            <th>Broker</th>
+            <th>Broker ID</th>
+            <th>Name</th>
+            <th>API Key</th>
+            <th>Status</th>
+            <th>Last Access Time</th>
+            <th>Generate Token</th>
+            <th>Action</th>
+          </tr>
+          {Array(20)
+            .fill(0)
+            .map((_, index) =>
+              brokersDetails.map(
+                ({
+                  apiKey,
+                  brokerName,
+                  lastAccessTime,
+                  userName,
+                  userId,
+                  pan,
+                }) => (
+                  <tr key={index} role="row">
+                    <td role="cell" data-cell="Serial No.">
+                      {index + 1}
+                    </td>
+                    <td role="cell" data-cell="Broker">
+                      {brokerName}
+                    </td>
+                    <td role="cell" data-cell="Broker ID">
+                      {hideString(userId)}
+                    </td>
+                    <td role="cell" data-cell="Name">
+                      {userName}
+                    </td>
+                    <td role="cell" data-cell="API Key">
+                      {hideString(apiKey)}
+                    </td>
+                    <td role="cell" data-cell="Status">
+                      <span className="success">Active</span>
+                    </td>
+                    <td role="cell" data-cell="Last Access Time">
+                      {new Intl.DateTimeFormat("en-IN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })
+                        .format(new Date(lastAccessTime))
+                        .replace(/\//g, ".")}
+                    </td>
+                    <td
+                      role="cell"
+                      data-cell="Generate Token"
+                      className="token"
                     >
-                      Click to Generate Token
-                    </span>
-                  </td>
-                  <td role="cell" data-cell="Action" className="action">
-                    <Action />
-                  </td>
-                </tr>
+                      <span
+                        onClick={async () => {
+                          const requestOTP = axios.post(
+                            "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
+                            "jData=" +
+                              JSON.stringify({
+                                uid: userId,
+                                pan: pan.toUpperCase(),
+                              })
+                          );
+                          toast.promise(requestOTP, {
+                            loading: "Loading...",
+                            success: () => {
+                              router.push("/broker-list/token");
+                              return "Token Generated Successfully";
+                            },
+                            error: (error: AxiosError) => {
+                              console.log(error);
+                              router.push("/broker-list");
+                              return "Something Went Wrong";
+                            },
+                          });
+                        }}
+                      >
+                        Click to Generate Token
+                      </span>
+                    </td>
+                    <td role="cell" data-cell="Action" className="action">
+                      <Action />
+                    </td>
+                  </tr>
+                )
               )
-            )
-          )}
+            )}
+        </tbody>
       </TableStyled>
     );
   } else {
