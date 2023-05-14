@@ -1,8 +1,14 @@
 import BrokerTable from "@/components/broker/BrokerTable";
-import { collection, doc, query, where } from "firebase/firestore";
+import {
+  DocumentData,
+  Query,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import Link from "next/link";
 import { ReactElement, useEffect, useState } from "react";
-import { useCollection, useDocument } from "react-firebase-hooks/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -21,36 +27,6 @@ const BrokerListStyled = styled.div`
   gap: 1rem;
 `;
 
-// const BrokerList = () => {
-//   const [user, loading, error] = useAuthState(auth);
-//   const userRef = user ? doc(db, "users", user.uid) : null;
-//   const [userDoc, userDocLoading, userDocError] = useDocument(userRef);
-
-//   const brokers: BrokerDetailType[] = userDoc?.data()?.brokers;
-
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     if (userDocError) {
-//       toast.error("Something went wrong");
-//       router.push("/");
-//       return;
-//     }
-//   }, [user, userDoc, userDocLoading, userDocError, router]);
-
-//   // Render your component based on the loading and error states
-
-//   if (!!loading || !!usersError || !!usersLoading) {
-//     return <BrokerListSkeleton />;
-//   }
-//   return (
-//     <BrokerListStyled>
-//       <BrokerListTop brokersExist={!!brokers} />
-//       <BrokerTable brokersDetails={brokers} />
-//     </BrokerListStyled>
-//   );
-// };
-
 const BrokerList = () => {
   const [user, userLoading, userError] = useAuthState(auth);
   const router = useRouter();
@@ -61,7 +37,7 @@ const BrokerList = () => {
     }
   }, [user, userLoading, router]);
 
-  const userQuery = user
+  const userQuery: Query<DocumentData> | null = !!user
     ? query(collection(db, "users"), where("uid", "==", user.uid))
     : null;
   const [userDocs, loading, error] = useCollection(userQuery);
@@ -74,7 +50,14 @@ const BrokerList = () => {
     }
   }, [error, userError, router]);
 
-  const brokers = userDocs?.docs[0]?.data()?.brokers ?? [];
+  const brokers: BrokerDetailType[] =
+    userDocs?.docs[0]
+      ?.data()
+      ?.brokers.sort((a: BrokerDetailType, b: BrokerDetailType) => {
+        if (a.lastAccessTime < b.lastAccessTime) return 1;
+        if (a.lastAccessTime > b.lastAccessTime) return -1;
+        return 0;
+      }) ?? [];
 
   if (loading || !userDocs) {
     return <BrokerListSkeleton />;
