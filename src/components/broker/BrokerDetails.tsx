@@ -94,44 +94,56 @@ const BrokerDetails = ({
       animate="show"
       exit="exit"
     >
-      <div className="form-top">
-        <h2>Add Broker</h2>
-      </div>
-      <div className="input-group">
-        <input type="text" id="userid" {...registerBroker("userid")} required />
-        <label htmlFor="userid">User ID</label>
-        <p className="error">{errorsBroker?.userid?.message}</p>
-      </div>
-      <div className="input-group">
-        <input type="text" id="pan" {...registerBroker("pan")} required />
-        <label htmlFor="pan">Pan Number</label>
-        <p className="error">{errorsBroker.pan?.message}</p>
-      </div>
-      <div className="input-group">
-        <input
-          type="password"
-          id="password"
-          autoComplete="on"
-          {...registerBroker("password")}
-          required
-        />
-        <label htmlFor="password">Password</label>
-        <p className="error">{errorsBroker.password?.message}</p>
-      </div>
-      <div className="input-group">
-        <input
-          type="text"
-          id="venderCode"
-          {...registerBroker("venderCode")}
-          required
-        />
-        <label htmlFor="venderCode">Vender Code</label>
-        <p className="error">{errorsBroker.venderCode?.message}</p>
-      </div>
-      <div className="input-group">
-        <input type="text" id="apiKey" {...registerBroker("apiKey")} required />
-        <label htmlFor="apiKey">API Key</label>
-        <p className="error">{errorsBroker.apiKey?.message}</p>
+      <div className="content">
+        <div className="form-top">
+          <h2>Add Broker</h2>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            id="userid"
+            {...registerBroker("userid")}
+            required
+          />
+          <label htmlFor="userid">User ID</label>
+          <p className="error">{errorsBroker?.userid?.message}</p>
+        </div>
+        <div className="input-group">
+          <input type="text" id="pan" {...registerBroker("pan")} required />
+          <label htmlFor="pan">Pan Number</label>
+          <p className="error">{errorsBroker.pan?.message}</p>
+        </div>
+        <div className="input-group">
+          <input
+            type="password"
+            id="password"
+            autoComplete="on"
+            {...registerBroker("password")}
+            required
+          />
+          <label htmlFor="password">Password</label>
+          <p className="error">{errorsBroker.password?.message}</p>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            id="venderCode"
+            {...registerBroker("venderCode")}
+            required
+          />
+          <label htmlFor="venderCode">Vender Code</label>
+          <p className="error">{errorsBroker.venderCode?.message}</p>
+        </div>
+        <div className="input-group">
+          <input
+            type="text"
+            id="apiKey"
+            {...registerBroker("apiKey")}
+            required
+          />
+          <label htmlFor="apiKey">API Key</label>
+          <p className="error">{errorsBroker.apiKey?.message}</p>
+        </div>
       </div>
       <ButtonGroup>
         <button type="submit">Get OTP</button>

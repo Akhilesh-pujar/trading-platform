@@ -42,7 +42,9 @@ const ButtonGroupStyled = styled.div<{
 
 const ButtonGroup = ({ children }: { children: React.ReactNode[] }) => {
   return (
-    <ButtonGroupStyled repeat={children.length}>{children}</ButtonGroupStyled>
+    <ButtonGroupStyled repeat={children.length} className="button-group">
+      {children}
+    </ButtonGroupStyled>
   );
 };
 
