@@ -67,34 +67,21 @@ const GlobalStyle = createGlobalStyle`
   & span.loader {
     width: 1rem;
     height: 1rem;
+    border: 2px solid #FFF;
+    border-bottom-color: rgb(var(--dark-color));
+    border-radius: 50%;
     display: inline-block;
-    position: relative;
-    &::after,
-    &::before {
-      content: "";
-      box-sizing: border-box;
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 50%;
-      border: 2px solid #fff;
-      position: absolute;
-      inset: -0.25rem;
-      animation: animloader 2s linear infinite;
+    animation: rotation 1s linear infinite;
     }
-    &::after {
-      animation-delay: 1s;
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
     }
-    @keyframes animloader {
-      0% {
-        transform: scale(0);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 0;
-      }
+    100% {
+        transform: rotate(360deg);
     }
-  }
+    } 
 `;
 
 const container = {

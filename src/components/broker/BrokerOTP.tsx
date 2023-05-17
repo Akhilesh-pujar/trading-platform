@@ -130,7 +130,6 @@ const BrokerOTP = ({
               userName: uname,
               userId: uid,
               branchId: brnchid,
-              password,
               venderCode,
               apiKey,
               pan,

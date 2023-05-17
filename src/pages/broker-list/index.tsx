@@ -16,6 +16,7 @@ import { BrokerDetailType } from "../../../types/BrokerDetail";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import BrokerListSkeleton from "@/components/skeleton/BrokerListSkeleton";
+import ModalOTP from "@/components/broker/ModalOTP";
 
 const BrokerListStyled = styled.div`
   color: rgb(var(--dark-color), 0.5);
@@ -29,6 +30,7 @@ const BrokerListStyled = styled.div`
 
 const BrokerList = () => {
   const [user, userLoading, userError] = useAuthState(auth);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -65,8 +67,11 @@ const BrokerList = () => {
 
   return (
     <BrokerListStyled>
+      {showModal && (
+        <ModalOTP showModal={showModal} setShowModal={setShowModal} />
+      )}
       <BrokerListTop brokersExist={brokers.length > 0} />
-      <BrokerTable brokersDetails={brokers} />
+      <BrokerTable brokersDetails={brokers} setShowModal={setShowModal} />
     </BrokerListStyled>
   );
 };

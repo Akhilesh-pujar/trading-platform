@@ -6,7 +6,6 @@ export type BrokerDetailType = {
   userName: string;
   userId: string;
   branchId: string;
-  password: string;
   venderCode: string;
   apiKey: string;
   pan: string;

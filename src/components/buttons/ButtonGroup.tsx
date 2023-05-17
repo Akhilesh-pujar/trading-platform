@@ -12,10 +12,12 @@ const ButtonGroupStyled = styled.div<{
     font-size: 1rem;
   }
   & > *:first-child {
-    border-radius: 5rem 0 0 5rem;
+    border-top-left-radius: 5rem;
+    border-bottom-left-radius: 5rem;
   }
   & > *:last-child {
-    border-radius: 0 5rem 5rem 0;
+    border-top-right-radius: 5rem;
+    border-bottom-right-radius: 5rem;
   }
   & button {
     background-color: rgb(var(--primary-color));
@@ -40,9 +42,16 @@ const ButtonGroupStyled = styled.div<{
   }
 `;
 
-const ButtonGroup = ({ children }: { children: React.ReactNode[] }) => {
+const ButtonGroup = ({
+  children,
+}: {
+  children: React.ReactNode[] | React.ReactNode;
+}) => {
   return (
-    <ButtonGroupStyled repeat={children.length} className="button-group">
+    <ButtonGroupStyled
+      repeat={Array.isArray(children) ? children.length : 0}
+      className="button-group"
+    >
       {children}
     </ButtonGroupStyled>
   );
