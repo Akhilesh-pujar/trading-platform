@@ -5,6 +5,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, number, object, string } from "yup";
 import ButtonGroup from "../buttons/ButtonGroup";
+import { TokenGenType } from "../../../types/TokenGenType";
+import axios, { AxiosError } from "axios";
+import { SHA256 } from "crypto-js";
+import { toast } from "react-hot-toast";
 
 const ModalStyled = styled.dialog`
   margin: auto;
@@ -102,19 +106,21 @@ type BrokerOTPType = InferType<typeof brokerOTPSchema>;
 const ModalOTP = ({
   showModal,
   setShowModal,
+  setPlay,
 }: {
-  showModal: boolean;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
+  showModal: TokenGenType;
+  setShowModal: Dispatch<SetStateAction<TokenGenType | null>>;
+  setPlay: Dispatch<SetStateAction<number | undefined>>;
 }) => {
   const modalRef = useRef<HTMLDialogElement>(null);
   const {
     register: registerBroker,
-    handleSubmit: handleSubmitBroker,
+    handleSubmit: handleSubmitOTP,
     formState: { errors: errorsBroker },
   } = useForm<BrokerOTPType>({
     resolver: yupResolver(brokerOTPSchema),
   });
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => setShowModal(null);
   useEffect(() => {
     if (showModal) {
       !modalRef.current?.open && modalRef.current?.showModal();
@@ -136,6 +142,35 @@ const ModalOTP = ({
       }
     }
   );
+  const verifyOTP = ({ otp, password }: BrokerOTPType) => {
+    if (!showModal) return;
+    const { userID, venderCode, apiKey }: TokenGenType = showModal;
+    const appKey = SHA256(`${userID}|${apiKey}`).toString();
+    const imei = "abc1234";
+    const data = {
+      uid: userID,
+      pwd: password,
+      factor2: otp,
+      vc: venderCode,
+      appkey: appKey,
+      apkversion: "1.0.0",
+      source: "API",
+      imei,
+    };
+    const jData = "jData=" + JSON.stringify(data);
+    axios
+      .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
+      .then(async ({ data: { susertoken: userToken } }) => {
+        console.log(userToken);
+        document.cookie = `token=${userToken};`;
+        toast.success("OTP Verified");
+        setPlay(showModal.index);
+      })
+      .catch((err: AxiosError) => {
+        console.error(err);
+        toast.error("Invalid OTP");
+      });
+  };
   return (
     <ModalStyled ref={modalRef}>
       <h2>Broker Login Form</h2>
@@ -143,7 +178,7 @@ const ModalOTP = ({
         <BsChevronLeft />
         <span>Back</span>
       </button>
-      <form>
+      <form onSubmit={handleSubmitOTP(verifyOTP)}>
         <div className="input-group">
           <input
             type="password"
@@ -157,7 +192,7 @@ const ModalOTP = ({
         </div>
         <div className="input-group">
           <input type="text" id="otp" {...registerBroker("otp")} required />
-          <label htmlFor="otp">Vender Code</label>
+          <label htmlFor="otp">OTP</label>
           <p className="error">{errorsBroker.otp?.message}</p>
         </div>
         <ButtonGroup>

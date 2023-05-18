@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import { BrokerDetailType } from "../../../types/BrokerDetail";
-import { RxCrossCircled } from "react-icons/rx";
-import { IoPlayOutline } from "react-icons/io5";
-import { CiPause1 } from "react-icons/ci";
-import axios, { AxiosError } from "axios";
-import { toast } from "react-hot-toast";
-// import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { CiPause1 } from "react-icons/ci";
+import { IoPlayOutline } from "react-icons/io5";
+import { RxCrossCircled } from "react-icons/rx";
+import { BrokerDetailType } from "../../../types/BrokerDetail";
+import type { TokenGenType } from "../../../types/TokenGenType";
 
 const TableStyled = styled.table`
   border-radius: 1rem;
@@ -95,27 +95,30 @@ const TableStyled = styled.table`
 const BrokerTable = ({
   brokersDetails,
   setShowModal,
+  play,
+  setPlay,
 }: {
   brokersDetails: BrokerDetailType[];
-  setShowModal: Dispatch<SetStateAction<boolean>>;
+  setShowModal: Dispatch<SetStateAction<TokenGenType | null>>;
+  play: number | undefined;
+  setPlay: Dispatch<SetStateAction<number | undefined>>;
 }) => {
-  const [play, setPlay] = useState<number | undefined>(undefined);
-  const [token, setToken] = useState<number | undefined>(undefined);
-  // const router = useRouter();
   const hideString = (str: string) =>
     `${str.substring(0, 2)}***${str.substring(str.length - 2)}`;
   const GenerateToken = async ({
-    userId,
+    index,
+    userID,
     pan,
-  }: {
-    userId: string;
+    venderCode,
+    apiKey,
+  }: TokenGenType & {
     pan: string;
   }) => {
     const requestOTP = axios.post(
       "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
       "jData=" +
         JSON.stringify({
-          uid: userId,
+          uid: userID,
           pan: pan.toUpperCase(),
         })
     );
@@ -125,7 +128,12 @@ const BrokerTable = ({
         return "Token Generated Successfully";
       },
       error: () => {
-        setShowModal(true);
+        setShowModal({
+          index,
+          userID,
+          venderCode,
+          apiKey,
+        });
         return "Something Went Wrong";
       },
     });
@@ -145,72 +153,84 @@ const BrokerTable = ({
             <th>Generate Token</th>
             <th>Action</th>
           </tr>
-          {Array(20)
-            .fill(0)
-            .map((_, index) =>
-              brokersDetails.map(
-                ({
-                  apiKey,
-                  brokerName,
-                  lastAccessTime,
-                  userName,
-                  userId,
-                  pan,
-                }) => (
-                  <tr key={index} role="row">
-                    <td role="cell" data-cell="Serial No.">
-                      {index + 1}
-                    </td>
-                    <td role="cell" data-cell="Broker">
-                      {brokerName}
-                    </td>
-                    <td role="cell" data-cell="Broker ID">
-                      {hideString(userId)}
-                    </td>
-                    <td role="cell" data-cell="Name">
-                      {userName}
-                    </td>
-                    <td role="cell" data-cell="API Key">
-                      {hideString(apiKey)}
-                    </td>
-                    <td role="cell" data-cell="Status">
-                      <span className="success">Active</span>
-                    </td>
-                    <td role="cell" data-cell="Last Access Time">
-                      {new Intl.DateTimeFormat("en-IN", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
+          {brokersDetails.map(
+            (
+              {
+                apiKey,
+                brokerName,
+                lastAccessTime,
+                userName,
+                userId: userID,
+                pan,
+                venderCode,
+              },
+              index
+            ) => (
+              <tr key={index} role="row">
+                <td role="cell" data-cell="Serial No.">
+                  {index + 1}
+                </td>
+                <td role="cell" data-cell="Broker">
+                  {brokerName}
+                </td>
+                <td role="cell" data-cell="Broker ID">
+                  {hideString(userID)}
+                </td>
+                <td role="cell" data-cell="Name">
+                  {userName}
+                </td>
+                <td role="cell" data-cell="API Key">
+                  {hideString(apiKey)}
+                </td>
+                <td role="cell" data-cell="Status">
+                  <span className="success">Active</span>
+                </td>
+                <td role="cell" data-cell="Last Access Time">
+                  {new Intl.DateTimeFormat("en-IN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })
+                    .format(new Date(lastAccessTime))
+                    .replace(/\//g, ".")}
+                </td>
+                <td role="cell" data-cell="Generate Token" className="token">
+                  <span
+                    onClick={() =>
+                      GenerateToken({
+                        index,
+                        userID,
+                        pan,
+                        venderCode,
+                        apiKey,
                       })
-                        .format(new Date(lastAccessTime))
-                        .replace(/\//g, ".")}
-                    </td>
-                    <td
-                      role="cell"
-                      data-cell="Generate Token"
-                      className="token"
-                    >
-                      <span
-                        onClick={() =>
-                          GenerateToken({
-                            userId,
-                            pan,
-                          })
-                        }
-                      >
-                        Click to Generate Token
-                      </span>
-                    </td>
-                    <td role="cell" data-cell="Action" className="action">
-                      <Action play={play} setPlay={setPlay} id={index} />
-                    </td>
-                  </tr>
-                )
-              )
-            )}
+                    }
+                  >
+                    Click to Generate Token
+                  </span>
+                </td>
+                <td role="cell" data-cell="Action" className="action">
+                  <span>
+                    {play !== index ? (
+                      <IoPlayOutline
+                        color="rgb(var(--success-color))"
+                        onClick={() => setPlay(index)}
+                      />
+                    ) : (
+                      <CiPause1
+                        color="rgb(var(--secondary-color))"
+                        onClick={() => setPlay(undefined)}
+                      />
+                    )}
+                    <RxCrossCircled color="rgb(var(--danger-color))" />
+                  </span>
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </TableStyled>
     );
@@ -232,30 +252,3 @@ const BrokerTable = ({
 };
 
 export default BrokerTable;
-
-const Action = ({
-  play,
-  setPlay,
-  id,
-}: {
-  play: number | undefined;
-  setPlay: Dispatch<SetStateAction<number | undefined>>;
-  id: number;
-}) => {
-  return (
-    <span>
-      {play !== id ? (
-        <IoPlayOutline
-          color="rgb(var(--success-color))"
-          onClick={() => setPlay(id)}
-        />
-      ) : (
-        <CiPause1
-          color="rgb(var(--secondary-color))"
-          onClick={() => setPlay(undefined)}
-        />
-      )}
-      <RxCrossCircled color="rgb(var(--danger-color))" />
-    </span>
-  );
-};

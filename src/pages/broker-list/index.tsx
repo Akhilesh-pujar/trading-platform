@@ -12,11 +12,12 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { BrokerDetailType } from "../../../types/BrokerDetail";
+import type { BrokerDetailType } from "../../../types/BrokerDetail";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import BrokerListSkeleton from "@/components/skeleton/BrokerListSkeleton";
 import ModalOTP from "@/components/broker/ModalOTP";
+import type { TokenGenType } from "../../../types/TokenGenType";
 
 const BrokerListStyled = styled.div`
   color: rgb(var(--dark-color), 0.5);
@@ -30,7 +31,8 @@ const BrokerListStyled = styled.div`
 
 const BrokerList = () => {
   const [user, userLoading, userError] = useAuthState(auth);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<TokenGenType | null>(null);
+  const [play, setPlay] = useState<number | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -68,10 +70,19 @@ const BrokerList = () => {
   return (
     <BrokerListStyled>
       {showModal && (
-        <ModalOTP showModal={showModal} setShowModal={setShowModal} />
+        <ModalOTP
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setPlay={setPlay}
+        />
       )}
       <BrokerListTop brokersExist={brokers.length > 0} />
-      <BrokerTable brokersDetails={brokers} setShowModal={setShowModal} />
+      <BrokerTable
+        brokersDetails={brokers}
+        setShowModal={setShowModal}
+        play={play}
+        setPlay={setPlay}
+      />
     </BrokerListStyled>
   );
 };
