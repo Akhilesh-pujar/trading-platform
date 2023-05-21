@@ -24,14 +24,14 @@ import ButtonGroup from "../buttons/ButtonGroup";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 const otpSchema = object({
-  // otp is only number and length is 6
+  // otp is only number and length is 5
   otp: number()
     .required()
     .typeError("OTP is required")
     .test({
       name: "len",
-      message: "OTP must be exactly 6 digits",
-      test: (val) => val?.toString().length === 6,
+      message: "OTP must be exactly 5 digits",
+      test: (val) => val?.toString().length === 5,
     }),
 });
 

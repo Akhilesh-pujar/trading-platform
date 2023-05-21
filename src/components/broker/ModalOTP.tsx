@@ -96,8 +96,8 @@ const brokerOTPSchema = object({
     .typeError("OTP is required")
     .test({
       name: "len",
-      message: "OTP must be exactly 6 digits",
-      test: (val) => val?.toString().length === 6,
+      message: "OTP must be exactly 5 digits",
+      test: (val) => val?.toString().length === 5,
     }),
 });
 
