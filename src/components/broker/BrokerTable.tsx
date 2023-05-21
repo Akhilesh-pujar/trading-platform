@@ -125,15 +125,15 @@ const BrokerTable = ({
     toast.promise(requestOTP, {
       loading: "Loading...",
       success: () => {
-        return "Token Generated Successfully";
-      },
-      error: () => {
         setShowModal({
           index,
           userID,
           venderCode,
           apiKey,
         });
+        return "Token Generated Successfully";
+      },
+      error: () => {
         return "Something Went Wrong";
       },
     });
