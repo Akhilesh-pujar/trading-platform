@@ -115,7 +115,7 @@ const BrokerTable = ({
     pan: string;
   }) => {
     const requestOTP = axios.post(
-      "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP/somethingWrong",
+      "https://shoonya.finvasia.com/NorenWClientWeb/FgtPwdOTP",
       "jData=" +
         JSON.stringify({
           uid: userID,
