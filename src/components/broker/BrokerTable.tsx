@@ -153,84 +153,89 @@ const BrokerTable = ({
             <th>Generate Token</th>
             <th>Action</th>
           </tr>
-          {brokersDetails.map(
-            (
-              {
-                apiKey,
-                brokerName,
-                lastAccessTime,
-                userName,
-                userId: userID,
-                pan,
-                venderCode,
-              },
-              index
-            ) => (
-              <tr key={index} role="row">
-                <td role="cell" data-cell="Serial No.">
-                  {index + 1}
-                </td>
-                <td role="cell" data-cell="Broker">
-                  {brokerName}
-                </td>
-                <td role="cell" data-cell="Broker ID">
-                  {hideString(userID)}
-                </td>
-                <td role="cell" data-cell="Name">
-                  {userName}
-                </td>
-                <td role="cell" data-cell="API Key">
-                  {hideString(apiKey)}
-                </td>
-                <td role="cell" data-cell="Status">
-                  <span className="success">Active</span>
-                </td>
-                <td role="cell" data-cell="Last Access Time">
-                  {new Intl.DateTimeFormat("en-IN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })
-                    .format(new Date(lastAccessTime))
-                    .replace(/\//g, ".")}
-                </td>
-                <td role="cell" data-cell="Generate Token" className="token">
-                  <span
-                    onClick={() =>
-                      GenerateToken({
-                        index,
-                        userID,
-                        pan,
-                        venderCode,
-                        apiKey,
+          {Array(5)
+            .fill(0)
+            .map((_, index) =>
+              brokersDetails.map(
+                ({
+                  apiKey,
+                  brokerName,
+                  lastAccessTime,
+                  userName,
+                  userId: userID,
+                  pan,
+                  venderCode,
+                }) => (
+                  <tr key={index} role="row">
+                    <td role="cell" data-cell="Serial No.">
+                      {index + 1}
+                    </td>
+                    <td role="cell" data-cell="Broker">
+                      {brokerName}
+                    </td>
+                    <td role="cell" data-cell="Broker ID">
+                      {hideString(userID)}
+                    </td>
+                    <td role="cell" data-cell="Name">
+                      {userName}
+                    </td>
+                    <td role="cell" data-cell="API Key">
+                      {hideString(apiKey)}
+                    </td>
+                    <td role="cell" data-cell="Status">
+                      <span className="success">Active</span>
+                    </td>
+                    <td role="cell" data-cell="Last Access Time">
+                      {new Intl.DateTimeFormat("en-IN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
                       })
-                    }
-                  >
-                    Click to Generate Token
-                  </span>
-                </td>
-                <td role="cell" data-cell="Action" className="action">
-                  <span>
-                    {play !== index ? (
-                      <IoPlayOutline
-                        color="rgb(var(--success-color))"
-                        onClick={() => setPlay(index)}
-                      />
-                    ) : (
-                      <CiPause1
-                        color="rgb(var(--secondary-color))"
-                        onClick={() => setPlay(undefined)}
-                      />
-                    )}
-                    <RxCrossCircled color="rgb(var(--danger-color))" />
-                  </span>
-                </td>
-              </tr>
-            )
-          )}
+                        .format(new Date(lastAccessTime))
+                        .replace(/\//g, ".")}
+                    </td>
+                    <td
+                      role="cell"
+                      data-cell="Generate Token"
+                      className="token"
+                    >
+                      <span
+                        onClick={() =>
+                          GenerateToken({
+                            index,
+                            userID,
+                            pan,
+                            venderCode,
+                            apiKey,
+                          })
+                        }
+                      >
+                        Click to Generate Token
+                      </span>
+                    </td>
+                    <td role="cell" data-cell="Action" className="action">
+                      <span>
+                        {play !== index ? (
+                          <IoPlayOutline
+                            color="rgb(var(--success-color))"
+                            onClick={() => setPlay(index)}
+                          />
+                        ) : (
+                          <CiPause1
+                            color="rgb(var(--secondary-color))"
+                            onClick={() => setPlay(undefined)}
+                          />
+                        )}
+                        <RxCrossCircled color="rgb(var(--danger-color))" />
+                      </span>
+                    </td>
+                  </tr>
+                )
+              )
+            )}
         </tbody>
       </TableStyled>
     );

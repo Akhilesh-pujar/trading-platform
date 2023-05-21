@@ -77,7 +77,7 @@ const BrokerOTP = ({
       uid: userid,
       pwd: password,
       // factor2: totp,
-      factor2: otp,
+      factor2: otp.toString(),
       vc: venderCode,
       appkey: appKey,
       apkversion: "1.0.0",

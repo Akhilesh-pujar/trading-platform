@@ -149,8 +149,8 @@ const ModalOTP = ({
     const imei = "abc1234";
     const data = {
       uid: userID,
-      pwd: password,
-      factor2: otp,
+      pwd: SHA256(password).toString(),
+      factor2: otp.toString(),
       vc: venderCode,
       appkey: appKey,
       apkversion: "1.0.0",
