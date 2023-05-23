@@ -1,5 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import styled from "styled-components";
+import rocket from "./../../public/icon/rocket.png";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase";
+import HeaderSkeleton from "./skeleton/HeaderSkeleton";
 
 const HeaderStyle = styled.header`
   position: fixed;
@@ -22,6 +27,8 @@ const HeaderStyle = styled.header`
       align-items: center;
       gap: 2rem;
       & h1 {
+        display: flex;
+        gap: 0.5rem;
         position: relative;
         font-size: 1.5rem;
         font-weight: 600;
@@ -126,11 +133,14 @@ const HeaderStyle = styled.header`
 `;
 
 const Header = () => {
+  const [user, loading, error] = useAuthState(auth);
   return (
     <HeaderStyle>
       <div className="navbar container">
         <div className="links">
-          <h1>FlashCliq</h1>
+          <h1>
+            FlashCliq <Image src={rocket} alt=""></Image>
+          </h1>
           <ul>
             <li>
               <Link href="/#home">Home</Link>
@@ -147,7 +157,13 @@ const Header = () => {
           </ul>
         </div>
         <div className="icons">
-          <Link href="/signup">Get Started</Link>
+          {!!loading ? (
+            <HeaderSkeleton />
+          ) : !!error || !user ? (
+            <Link href="/signup">Get Started</Link>
+          ) : (
+            !!user && <Link href="/broker-list">Trade</Link>
+          )}
         </div>
       </div>
     </HeaderStyle>

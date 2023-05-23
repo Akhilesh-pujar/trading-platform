@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createGlobalStyle } from "styled-components";
 import { motion } from "framer-motion";
-import { Page } from "../../page";
+import { Page } from "../../types/page";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
@@ -18,13 +18,17 @@ const GlobalStyle = createGlobalStyle`
   :root{
     --light-color: 255, 255, 255;
     --dark-color: 66, 66, 66;
-    --primary-color: 56, 126, 209;
+    --primary-color: 136, 140, 27;
     --secondary-color: 253, 192, 102;
+    --success-color: 3, 179, 10;
     --danger-color: 255, 0, 0;
     scroll-behavior: smooth;
   }
   ::-webkit-scrollbar {
     width: 0;
+  }
+  html {
+    color-scheme: light;
   }
   html, body {
     overflow-x: hidden;
@@ -51,12 +55,33 @@ const GlobalStyle = createGlobalStyle`
     color: inherit;
     transition: 0.15s;
   }
+  input{
+    background-color: transparent;
+  }
   button {
     cursor: pointer;
     border: none;
     background-color: transparent;
     user-select: none;
   }
+  & span.loader {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #FFF;
+    border-bottom-color: rgb(var(--dark-color));
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 
 `;
 
 const container = {

@@ -12,21 +12,18 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 const phoneNumberSchema = object({
-  // phoneNumber is only number and length is 10
+  // phoneNumber is only number and exactly 10 digits
   phoneNumber: number()
-    .required()
-    .typeError("Phone number is required")
-    .test({
-      name: "len",
-      message: "Phone number must be exactly 10 digits",
-      test: (val) => val?.toString().length === 10,
-    }),
+    .test(
+      "len",
+      "Must be exactly 10 digits",
+      (val) => val?.toString().length === 10
+    )
+    .typeError("Phone number must be exactly 10 digits")
+    .required(),
 });
 
 type FormDataPhoneNumber = InferType<typeof phoneNumberSchema>;
-type Window = typeof window & {
-  recaptchaVerifier?: RecaptchaVerifier;
-};
 
 const container = {
   hidden: { opacity: 0, x: "-100vw" },
@@ -49,29 +46,27 @@ const FormPhoneNumber = ({
   });
   const sendOTP = async ({ phoneNumber }: FormDataPhoneNumber) => {
     setLoading(true);
-    const windowWithVerifier = window as Window;
     try {
-      const appVerifier = windowWithVerifier.recaptchaVerifier
-        ? windowWithVerifier.recaptchaVerifier
-        : (windowWithVerifier.recaptchaVerifier = new RecaptchaVerifier(
-            "recaptcha-container",
-            {
-              size: "invisible",
-              callback: () => {},
-              "expired-callback": () => {},
-            },
-            auth
-          ));
       const phoneNumberWithCountryCode = `+91${phoneNumber}`;
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         phoneNumberWithCountryCode,
-        appVerifier
+        new RecaptchaVerifier(
+          "recaptcha-container",
+          {
+            size: "visible",
+            callback: () => {},
+            "expired-callback": () => {},
+          },
+          auth
+        )
       );
       setShowOTP(confirmationResult);
       toast.success("OTP is sent successfully!");
     } catch (err) {
+      console.log(err);
       toast.error("Something went wrong!");
+      setLoading(false);
     }
   };
   return (
@@ -107,7 +102,7 @@ const FormPhoneNumber = ({
       )}
       <div id="recaptcha-container"></div>
       <button type="submit" disabled={loading}>
-        {loading && <span className="loader"></span>}
+        {loading && <span className="loader" />}
         Get OTP
       </button>
     </motion.form>

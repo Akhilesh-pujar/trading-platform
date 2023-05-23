@@ -1,165 +1,113 @@
 import styled from "styled-components";
-import {
-  BsGithub,
-  BsInstagram,
-  BsLinkedin,
-  BsTwitter,
-  BsYoutube,
-} from "react-icons/bs";
 import { useState } from "react";
 
 const FooterElement = styled.footer`
   background-color: rgb(var(--dark-color), 0.05);
-  margin-block: 3rem 5rem;
-  padding: 3rem;
-  border-radius: 2rem;
+  width: 100%;
+  margin-top: 3rem;
   text-align: center;
+  padding-block: 2.5rem 0;
   transition: 0.15s;
-  box-shadow: 0 0 1rem rgb(var(--dark-color), 0.1);
-  border: 1px solid rgb(var(--dark-color), 0.1);
-  & .row {
-    margin-bottom: 2rem;
+  & .description {
     display: flex;
-    gap: 5rem;
-    @media screen and (max-width: 50rem) {
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    @media screen and (width < 50rem) {
       flex-direction: column;
-      gap: 2rem;
-    }
-    & .col {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 1rem;
+    }
+    & .hero {
       text-align: left;
-      @media screen and (max-width: 50rem) {
+      @media screen and (width < 50rem) {
         text-align: center;
       }
-      & .col-header {
+      & h2 {
+        font-size: 2rem;
+        color: rgb(var(--primary-color));
+        font-weight: 500;
+        transition: 0.15s;
+      }
+      & span {
+        font-size: 1.25rem;
+        font-weight: 400;
+        color: rgb(var(--dark-color), 0.5);
+      }
+      & p {
+        font-size: 1rem;
+        color: rgb(var(--dark-color), 0.5);
+      }
+    }
+    & .socials {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.25rem;
+      @media screen and (width < 50rem) {
+        align-items: center;
+      }
+      & h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: rgb(var(--primary-color));
+      }
+      & ul {
         display: flex;
         flex-direction: column;
-        & h2 {
-          font-size: 1.5rem;
-          color: rgb(var(--primary-color));
+        justify-content: center;
+        align-items: flex-start;
+        gap: 0.25rem;
+        list-style: none;
+        @media screen and (width < 50rem) {
+          align-items: center;
         }
-        & span {
-          font-size: 1rem;
-          color: rgb(var(--primary-color), 0.8);
-          font-weight: 300;
-        }
-      }
-      @media screen and (max-width: 50rem) {
-        &.social .col-body {
-          & ul {
-            align-items: center;
-          }
-        }
-      }
-      & .col-body {
-        & ul {
-          list-style: none;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          flex-direction: column;
-          gap: 0.5rem;
-          & li {
-            font-size: 0.9rem;
-            color: rgb(var(--dark-color), 0.5);
-            transition: 0.15s;
-            white-space: nowrap;
-            font-weight: 500;
-            &:hover {
-              color: rgb(var(--primary-color));
+        & li {
+          position: relative;
+          font-weight: 400;
+          color: rgb(var(--dark-color), 0.75);
+          transition: 0.15s;
+          &::before {
+            content: "";
+            position: absolute;
+            inset: auto 0 0 0;
+            width: 100%;
+            height: 0.15rem;
+            transform: scaleX(0);
+            border-radius: 0.25rem;
+            background-color: rgb(var(--primary-color));
+            @keyframes animate-links {
+              0% {
+                transform: scaleX(0);
+                transform-origin: left;
+              }
+              50% {
+                transform: scaleX(1);
+                transform-origin: left;
+              }
+              100% {
+                transform: scaleX(0);
+                transform-origin: right;
+              }
             }
           }
-          &.description li {
-            white-space: normal;
+          &:hover {
+            color: rgb(var(--primary-color));
           }
-        }
-      }
-      & a.dashboard {
-        position: relative;
-        font-weight: 600;
-        font-size: small;
-        text-transform: uppercase;
-        letter-spacing: 0.1rem;
-        color: rgb(var(--light-color));
-        margin-left: auto;
-        width: fit-content;
-        padding: 0.75rem 1.5rem;
-        border-radius: 5rem;
-        background-color: rgb(var(--primary-color));
-        border: 1px solid rgb(var(--light-color), 0.1);
-        cursor: pointer;
-        overflow: hidden;
-        box-shadow: 0 0.15rem 0.5rem rgb(var(--primary-color), 0.25),
-          0 0.25rem 1rem rgb(var(--primary-color), 0.1);
-        transition: 0.5s;
-        @media screen and (max-width: 50rem) {
-          margin-inline: auto;
-        }
-        &:hover {
-          box-shadow: 0 0 0.75rem rgb(var(--primary-color), 0.25);
-        }
-        &::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 3rem;
-          height: 100%;
-          background-color: rgb(var(--dark-color), 0.5);
-          transform: skewX(-30deg) translateX(-400%);
-          transition: 0.75s;
-        }
-        &:hover::before {
-          transform: skewX(-30deg) translateX(400%);
+          &:hover::before {
+            animation: animate-links 0.5s ease;
+          }
         }
       }
     }
   }
   & .credits {
-    font-size: 1rem;
+    padding: 1.25rem 0;
+    font-size: 0.8rem;
+    font-weight: 400;
     color: rgb(var(--dark-color), 0.5);
-    letter-spacing: 0.05rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.75rem;
-    @media screen and (max-width: 50rem) {
-      flex-direction: column;
-      gap: 1rem;
-    }
-    & .left {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      @media screen and (max-width: 50rem) {
-        flex-direction: column;
-      }
-      & .socials {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1.15rem;
-        & a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          & svg {
-            transition: 0.15s;
-            &:hover {
-              color: rgb(var(--primary-color), 0.8);
-            }
-          }
-        }
-      }
-    }
-    & .right {
-      cursor: pointer;
-    }
+    border-top: 1px solid rgb(var(--dark-color), 0.1);
   }
 `;
 
@@ -182,81 +130,56 @@ const Footer = () => {
           .join("")
       );
       if (iterations >= original.length) clearInterval(interval);
-      iterations += 1 / 3;
+      iterations += 1 / 2;
     }, 30);
   };
+  const socials = [
+    {
+      name: "Linkedin",
+      link: "https://www.linkedin.com/in/tojo",
+    },
+    {
+      name: "Twitter",
+      link: "https://twitter.com/tojo",
+    },
+    {
+      name: "Github",
+      link: "https://github.com/tojo",
+    },
+    {
+      name: "Instagram",
+      link: "http://instagram.com/tojo",
+    },
+    {
+      name: "Youtube",
+      link: "https://www.youtube.com/@tojo/",
+    },
+  ];
   return (
-    <FooterElement className="container">
-      <div>
-        <div className="row">
-          <div className="col">
-            <div className="col-header">
-              <h2 onMouseOver={mouseOver}>{logo}</h2>
-              <span>Get a turbocharged rush with FlashCliq Tradings</span>
-            </div>
-            <div className="col-body">
-              <ul className="description">
-                <li>
-                  Designed and built with all the love in the world by the
-                  FlashCliq using Next.js.
-                </li>
-              </ul>
-            </div>
-          </div>
-          {/* <div className="col">
-            <Link href="/dashboard" className="dashboard">
-              Dashboard
-            </Link>
-          </div> */}
+    <FooterElement className="">
+      <div className="description container">
+        <div className="hero">
+          <h2 onMouseOver={mouseOver}>{logo}</h2>
+          <span>Get a turbocharged rush with FlashCliq Tradings</span>
+          <p>
+            Designed and built with all the love in the world by the FlashCliq
+            using Next.js.
+          </p>
         </div>
-        <div className="credits">
-          <div className="left">
-            <div className="socials">
-              <a
-                href="https://www.linkedin.com/in/tojo"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Linkedin"
-              >
-                <BsLinkedin />
-              </a>
-              <a
-                href="https://twitter.com/tojo"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Twitter"
-              >
-                <BsTwitter />
-              </a>
-              <a
-                href="https://github.com/tojo"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Github"
-              >
-                <BsGithub />
-              </a>
-              <a
-                href="http://instagram.com/tojo"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Instagram"
-              >
-                <BsInstagram />
-              </a>
-              <a
-                href="https://www.youtube.com/@tojo/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Youtube"
-              >
-                <BsYoutube />
-              </a>
-            </div>
-          </div>
-          <div className="right">© 2023 FlashCliq Tradings, Inc.</div>
+        <div className="socials">
+          <h3>Socials</h3>
+          <ul>
+            {socials.map((social, index) => (
+              <li key={index}>
+                <a href={social.link} target="_blank" rel="noreferrer">
+                  {social.name}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+      <div className="credits">© 2023 FlashCliq Tradings, Inc.</div>
     </FooterElement>
   );
 };

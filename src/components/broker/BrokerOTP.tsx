@@ -1,27 +1,37 @@
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType, number, object } from "yup";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { SHA256 } from "crypto-js";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 // import { authenticator } from "otplib";
 import { toast } from "react-hot-toast";
 import { auth, db } from "../../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { BrokerType } from "../../../types/Broker";
+import { Dispatch, SetStateAction } from "react";
+import ButtonGroup from "../buttons/ButtonGroup";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 const otpSchema = object({
-  // otp is only number and length is 6
+  // otp is only number and length is 5
   otp: number()
     .required()
     .typeError("OTP is required")
     .test({
       name: "len",
-      message: "OTP must be exactly 6 digits",
-      test: (val) => val?.toString().length === 6,
+      message: "OTP must be exactly 5 digits",
+      test: (val) => val?.toString().length === 5,
     }),
 });
 
@@ -33,11 +43,15 @@ const container = {
   exit: { opacity: 0, x: "100vw" },
 };
 
-const BrokerOTP = () => {
+const BrokerOTP = ({
+  broker,
+  setShowOTP,
+}: {
+  broker: BrokerType;
+  setShowOTP: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { push } = useRouter();
-  // get the user details from firebase
   const [user] = useAuthState(auth);
-  const [users] = useCollection(collection(db, "users"));
   const {
     register: registerOTP,
     handleSubmit: handleSubmitOTP,
@@ -45,31 +59,25 @@ const BrokerOTP = () => {
   } = useForm<FormDataOTP>({
     resolver: yupResolver(otpSchema),
   });
+  const userQuery = query(
+    collection(db, "users"),
+    where("uid", "==", user?.uid)
+  );
+  const [userDocs, loading, error] = useCollection(userQuery);
   const verifyOTP = async ({ otp }: FormDataOTP) => {
     // const password = sha256("Shan@1234").toString();
     // const userid = "FA97180";
     // const apiSecret = "0d14c648394ca23897d46627fe7e08a8";
-    const {
-      pan,
-      userid,
-      password,
-      venderCode,
-      apiKey,
-    }: {
-      pan: string;
-      userid: string;
-      password: string;
-      venderCode: string;
-      apiKey: string;
-    } = JSON.parse(localStorage.getItem("broker") || "{}");
     // const secret = "2SKOG3TLZR4ZE7U4NKS2677X4KJ54W3D";
     // const totp = authenticator.generate(secret);
+    const { pan, userid, password, venderCode, apiKey }: BrokerType = broker;
     const appKey = SHA256(`${userid}|${apiKey}`).toString();
     const imei = "abc1234";
     const data = {
       uid: userid,
       pwd: password,
-      factor2: otp,
+      // factor2: totp,
+      factor2: otp.toString(),
       vc: venderCode,
       appkey: appKey,
       apkversion: "1.0.0",
@@ -79,28 +87,27 @@ const BrokerOTP = () => {
     const jData = "jData=" + JSON.stringify(data);
     axios
       .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
-      .then(
-        async ({
-          data: {
-            brkname,
-            email,
-            lastaccesstime,
-            request_time,
-            uname,
-            uid,
-            brnchid,
-          },
-        }) => {
-          toast.success("OTP Verified");
-          console.log(users?.docs);
-          await addDoc(collection(db, "users"), {
+      .then(async ({ data: { brkname, email, uname, uid, brnchid } }) => {
+        toast.success("OTP Verified");
+        if (loading) {
+          console.log(loading);
+          toast.loading("Loading...");
+        }
+        if (error) {
+          console.log(error);
+          toast.dismiss();
+          toast.error("Something went wrong");
+        }
+        if (!userDocs?.docs?.length) {
+          toast.dismiss();
+          // user document doesn't exist, create a new one
+          const userDocRef = await addDoc(collection(db, "users"), {
             uid: user?.uid,
             brokers: [
               {
                 brokerName: brkname,
                 email,
-                lastAccessTime: lastaccesstime,
-                requestTime: request_time,
+                lastAccessTime: serverTimestamp(),
                 userName: uname,
                 userId: uid,
                 branchId: brnchid,
@@ -111,21 +118,27 @@ const BrokerOTP = () => {
               },
             ],
           });
-          // let payload =
-          //   "jData=" + JSON.stringify({ uid: data.uid, actid: data.actid });
-          // payload = payload + "&jKey=" + data.susertoken;
-          // axios
-          //   .post("https://api.shoonya.com/NorenWClientTP/Limits/", payload)
-          //   .then(({ data }) => {
-          //     console.log(data);
-          //   })
-          //   .catch((err) => {
-          //     console.error(err);
-          //   });
-          push("/broker-list");
+        } else {
+          toast.dismiss();
+          // user document exists, update the brokers array using arrayUnion
+          const userDoc = userDocs.docs[0];
+          await updateDoc(userDoc.ref, {
+            brokers: arrayUnion({
+              brokerName: brkname,
+              email,
+              lastAccessTime: serverTimestamp(),
+              userName: uname,
+              userId: uid,
+              branchId: brnchid,
+              venderCode,
+              apiKey,
+              pan,
+            }),
+          });
         }
-      )
-      .catch((err) => {
+        push("/broker-list");
+      })
+      .catch((err: AxiosError) => {
         console.error(err);
         toast.error("Invalid OTP");
       });
@@ -148,10 +161,18 @@ const BrokerOTP = () => {
         <label htmlFor="otp">OTP</label>
         <p className="error">{errorsOTP.otp?.message}</p>
       </div>
-      <div className="buttons">
+      {/* <div className="buttons">
         <button type="submit">Verify OTP</button>
-        <Link href="/broker-list">Cancel</Link>
-      </div>
+        <button type="button" onClick={() => setShowOTP(false)}>
+          Cancel
+        </button>
+      </div> */}
+      <ButtonGroup>
+        <button type="submit">Verify OTP</button>
+        <button type="button" onClick={() => setShowOTP(false)}>
+          Cancel
+        </button>
+      </ButtonGroup>
     </motion.form>
   );
 };

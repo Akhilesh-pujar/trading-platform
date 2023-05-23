@@ -8,6 +8,10 @@ const Main = styled.main`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  @media screen and (width < 50rem) {
+    margin-top: 5rem;
+    text-align: center;
+  }
 `;
 
 const Home = () => {
