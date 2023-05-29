@@ -9,82 +9,88 @@ import { TokenGenType } from "../../../types/TokenGenType";
 import axios, { AxiosError } from "axios";
 import { SHA256 } from "crypto-js";
 import { toast } from "react-hot-toast";
+import { useCookies } from "react-cookie";
 
 const ModalStyled = styled.dialog`
-  margin: auto;
   padding: 1rem 2rem;
+  margin: auto;
   border: none;
   border-radius: 0.5rem;
   width: min(90%, 40rem);
   height: min(90%, 40rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  & h2 {
-    font-size: 2rem;
-    color: rgb(var(--dark-color));
-  }
-  & button[data-close] {
-    position: absolute;
-    left: 1rem;
-    top: 1rem;
-    padding: 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.25rem;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    background-color: rgb(var(--dark-color), 0.05);
-    &:hover {
-      background-color: rgb(var(--dark-color), 0.1);
-    }
-  }
-  & form {
+  .form-container {
+    position: relative;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    & .input-group {
-      width: 100%;
-      position: relative;
-      & input {
-        width: 100%;
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-        outline: 0 solid rgb(var(--primary-color), 0.25);
-        border: 1px solid rgb(var(--dark-color), 0.5);
-        border-radius: 5rem;
-        transition: 0.15s;
-        &:focus {
-          color: rgb(var(--primary-color));
-          outline-width: 5px;
-        }
-      }
-      & label {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: rgb(var(--dark-color), 0.75);
-        transition: 0.15s;
-      }
-      & input:valid ~ label,
-      input:focus ~ label {
-        top: 0;
-        left: 5rem;
-        font-size: 0.8rem;
-        padding: 0 0.25rem;
-        color: rgb(var(--primary-color));
-        background-color: rgb(var(--light-color));
+    gap: 1.5rem;
+    & h2 {
+      font-size: 2rem;
+      color: rgb(var(--dark-color));
+    }
+    & button[data-close] {
+      position: absolute;
+      top: 1rem;
+      left: 0;
+      padding: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      background-color: rgb(var(--dark-color), 0.05);
+      &:hover {
+        background-color: rgb(var(--dark-color), 0.1);
       }
     }
-    & .button-group {
+    & form {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      & .input-group {
+        width: 100%;
+        position: relative;
+        & input {
+          width: 100%;
+          font-size: 1rem;
+          padding: 0.75rem 1rem;
+          outline: 0 solid rgb(var(--primary-color), 0.25);
+          border: 1px solid rgb(var(--dark-color), 0.5);
+          border-radius: 5rem;
+          transition: 0.15s;
+          &:focus {
+            color: rgb(var(--primary-color));
+            outline-width: 5px;
+          }
+        }
+        & label {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: rgb(var(--dark-color), 0.75);
+          transition: 0.15s;
+        }
+        & input:valid ~ label,
+        input:focus ~ label {
+          top: 0;
+          left: 5rem;
+          font-size: 0.8rem;
+          padding: 0 0.25rem;
+          color: rgb(var(--primary-color));
+          background-color: rgb(var(--light-color));
+        }
+      }
+      & .button-group {
+        width: 100%;
+      }
     }
   }
 `;
@@ -106,12 +112,11 @@ type BrokerOTPType = InferType<typeof brokerOTPSchema>;
 const ModalOTP = ({
   showModal,
   setShowModal,
-  setPlay,
 }: {
   showModal: TokenGenType;
   setShowModal: Dispatch<SetStateAction<TokenGenType | null>>;
-  setPlay: Dispatch<SetStateAction<number | undefined>>;
 }) => {
+  const [, setCookie] = useCookies();
   const modalRef = useRef<HTMLDialogElement>(null);
   const {
     register: registerBroker,
@@ -162,9 +167,9 @@ const ModalOTP = ({
       .post("https://api.shoonya.com/NorenWClientTP/QuickAuth/", jData)
       .then(async ({ data: { susertoken: userToken } }) => {
         console.log(userToken);
-        document.cookie = `token=${userToken};`;
+        closeModal();
+        setCookie(userID, userToken, { path: "/", maxAge: 86400 });
         toast.success("OTP Verified");
-        setPlay(showModal.index);
       })
       .catch((err: AxiosError) => {
         console.error(err);
@@ -173,34 +178,36 @@ const ModalOTP = ({
   };
   return (
     <ModalStyled ref={modalRef}>
-      <h2>Broker Login Form</h2>
-      <button onClick={closeModal} data-close>
-        <BsChevronLeft />
-        <span>Back</span>
-      </button>
-      <form onSubmit={handleSubmitOTP(verifyOTP)}>
-        <div className="input-group">
-          <input
-            type="password"
-            id="password"
-            autoComplete="on"
-            {...registerBroker("password")}
-            required
-          />
-          <label htmlFor="password">Password</label>
-          <p className="error">{errorsBroker.password?.message}</p>
-        </div>
-        <div className="input-group">
-          <input type="text" id="otp" {...registerBroker("otp")} required />
-          <label htmlFor="otp">OTP</label>
-          <p className="error">{errorsBroker.otp?.message}</p>
-        </div>
-        <ButtonGroup>
-          <button type="submit" data-submit>
-            Login
-          </button>
-        </ButtonGroup>
-      </form>
+      <div className="form-container">
+        <h2>Broker Login Form</h2>
+        <button onClick={closeModal} data-close>
+          <BsChevronLeft />
+          <span>Back</span>
+        </button>
+        <form onSubmit={handleSubmitOTP(verifyOTP)}>
+          <div className="input-group">
+            <input
+              type="password"
+              id="password"
+              autoComplete="on"
+              {...registerBroker("password")}
+              required
+            />
+            <label htmlFor="password">Password</label>
+            <p className="error">{errorsBroker.password?.message}</p>
+          </div>
+          <div className="input-group">
+            <input type="text" id="otp" {...registerBroker("otp")} required />
+            <label htmlFor="otp">OTP</label>
+            <p className="error">{errorsBroker.otp?.message}</p>
+          </div>
+          <ButtonGroup>
+            <button type="submit" data-submit>
+              Login
+            </button>
+          </ButtonGroup>
+        </form>
+      </div>
     </ModalStyled>
   );
 };

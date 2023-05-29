@@ -59,6 +59,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
   }
   button {
+    color: inherit;
     cursor: pointer;
     border: none;
     background-color: transparent;

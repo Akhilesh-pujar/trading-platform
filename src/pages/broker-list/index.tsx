@@ -3,7 +3,11 @@ import {
   DocumentData,
   Query,
   collection,
+  doc,
+  getDoc,
+  getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import Link from "next/link";
@@ -63,6 +67,28 @@ const BrokerList = () => {
         return 0;
       }) ?? [];
 
+  const deleteBroker = async (userID: string) => {
+    // Delete broker from firestore using react-firebase-hooks
+    try {
+      const userDocSnapshot = await getDocs(collection(db, "users"));
+      if (userDocSnapshot.empty) {
+        toast.error("User document not found");
+        return;
+      }
+      const brokers = userDocSnapshot.docs[0].data().brokers;
+      const updatedBrokers = brokers.filter(
+        (brokerDetail: BrokerDetailType) => brokerDetail.userId !== userID
+      );
+      await updateDoc(userDocSnapshot.docs[0].ref, {
+        brokers: updatedBrokers,
+      });
+      toast.success("Broker deleted successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    }
+  };
+
   if (loading || !userDocs) {
     return <BrokerListSkeleton />;
   }
@@ -70,18 +96,15 @@ const BrokerList = () => {
   return (
     <BrokerListStyled>
       {showModal && (
-        <ModalOTP
-          showModal={showModal}
-          setShowModal={setShowModal}
-          setPlay={setPlay}
-        />
+        <ModalOTP showModal={showModal} setShowModal={setShowModal} />
       )}
-      <BrokerListTop brokersExist={brokers.length > 0} />
+      <BrokerListTop brokersExist={brokers.length > 0} play={play} />
       <BrokerTable
         brokersDetails={brokers}
         setShowModal={setShowModal}
         play={play}
         setPlay={setPlay}
+        deleteBroker={deleteBroker}
       />
     </BrokerListStyled>
   );
@@ -111,7 +134,13 @@ const BrokerListTopStyled = styled.div`
   }
 `;
 
-const BrokerListTop = ({ brokersExist }: { brokersExist: boolean }) => {
+const BrokerListTop = ({
+  brokersExist,
+  play,
+}: {
+  brokersExist: boolean;
+  play: number | undefined;
+}) => {
   const [loading, setLoading] = useState(false);
   return (
     <BrokerListTopStyled className="container">
@@ -123,7 +152,15 @@ const BrokerListTop = ({ brokersExist }: { brokersExist: boolean }) => {
         {!!loading && <span className="loader" />} Add Broker
       </Link>
       {brokersExist && (
-        <button onClick={() => window.open("/trade", "", "popup")}>
+        <button
+          onClick={() => {
+            if (!!play) {
+              window.open("/trade", "", "popup");
+              return;
+            }
+            toast.error("Please select a broker to open trade window");
+          }}
+        >
           Open 1 Cliq Trade Window
         </button>
       )}

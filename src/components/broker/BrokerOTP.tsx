@@ -22,6 +22,7 @@ import { BrokerType } from "../../../types/Broker";
 import { Dispatch, SetStateAction } from "react";
 import ButtonGroup from "../buttons/ButtonGroup";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { BsChevronLeft } from "react-icons/bs";
 
 const otpSchema = object({
   // otp is only number and length is 5
@@ -152,26 +153,23 @@ const BrokerOTP = ({
       animate="show"
       exit="exit"
     >
-      <div className="form-top">
-        <h2>Enter OTP</h2>
-        <p>Enter the OTP sent to your mobile number</p>
+      <button type="button" onClick={() => setShowOTP(false)} data-back>
+        <BsChevronLeft />
+        <span>Back</span>
+      </button>
+      <div className="content">
+        <div className="form-top">
+          <h2>Enter OTP</h2>
+          <p>Enter the OTP sent to your mobile number</p>
+        </div>
+        <div className="input-group">
+          <input type="text" id="otp" {...registerOTP("otp")} required />
+          <label htmlFor="otp">OTP</label>
+          <p className="error">{errorsOTP.otp?.message}</p>
+        </div>
       </div>
-      <div className="input-group">
-        <input type="text" id="otp" {...registerOTP("otp")} required />
-        <label htmlFor="otp">OTP</label>
-        <p className="error">{errorsOTP.otp?.message}</p>
-      </div>
-      {/* <div className="buttons">
-        <button type="submit">Verify OTP</button>
-        <button type="button" onClick={() => setShowOTP(false)}>
-          Cancel
-        </button>
-      </div> */}
       <ButtonGroup>
         <button type="submit">Verify OTP</button>
-        <button type="button" onClick={() => setShowOTP(false)}>
-          Cancel
-        </button>
       </ButtonGroup>
     </motion.form>
   );
