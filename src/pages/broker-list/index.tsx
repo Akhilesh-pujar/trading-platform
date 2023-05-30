@@ -3,8 +3,6 @@ import {
   DocumentData,
   Query,
   collection,
-  doc,
-  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -31,6 +29,22 @@ const BrokerListStyled = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      rgb(var(--dark-color), 0.05) 0%,
+      rgb(var(--primary-color), 0.25) 25%,
+      rgb(var(--primary-color), 0.25) 75%,
+      rgb(var(--dark-color), 0.05) 100%
+    );
+  }
 `;
 
 const BrokerList = () => {
@@ -154,7 +168,7 @@ const BrokerListTop = ({
       {brokersExist && (
         <button
           onClick={() => {
-            if (!!play) {
+            if (play !== undefined) {
               window.open("/trade", "", "popup");
               return;
             }
