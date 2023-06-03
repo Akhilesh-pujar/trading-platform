@@ -18,21 +18,64 @@ const Trade = () => {
         router.push("/broker-list");
         return;
       }
-      const payload =
-        "jData=" +
-        JSON.stringify({
-          uid: userID,
-          actid: userID,
-        }) +
-        "&jKey=" +
-        cookies?.[userID!];
-      console.log(
-        axios.post(
-          "https://api.shoonya.com/NorenWClientTP/PositionBook/",
-          payload
-        )
+      const token = cookies?.[userID];
+      const connectRequest = {
+        t: "c",
+        uid: userID,
+        actid: userID,
+        source: "API",
+        susertoken: token,
+      };
+      const socket = new WebSocket(
+        "wss://api.shoonya.com/NorenWSTP/PositionBook/"
       );
-      setToken(cookies?.[userID]);
+      socket.onopen = () => {
+        socket.send(JSON.stringify(connectRequest));
+      };
+      socket.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        // const payload =
+        //   "jData=" +
+        //   JSON.stringify({
+        //     uid: userID,
+        //     actid: userID,
+        //   }) +
+        //   "&jKey=" +
+        //   token;
+        socket.send(
+          JSON.stringify({
+            t: "s",
+          })
+        );
+        socket.send(
+          JSON.stringify({
+            t: "p",
+          })
+        );
+        socket.send(
+          JSON.stringify({
+            t: "h",
+          })
+        );
+        socket.send(
+          JSON.stringify({
+            t: "o",
+          })
+        );
+        // await axios
+        //   .post("https://api.shoonya.com/NorenWClientTP/PositionBook", payload)
+        //   .then((res) => {
+        //     console.log(res.data);
+        //   });
+      };
+      socket.onclose = () => {
+        console.log("Socket closed");
+      };
+      socket.onerror = (error) => {
+        console.log("Socket error", error);
+      };
+      setToken(token);
       setLoading(false);
     }
   }, [cookies, cookies.userID, router, token]);

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { type Page } from "../../../types/page";
 import BrokerTable from "@/components/broker/BrokerTable";
 import {
   DocumentData,
@@ -8,7 +10,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import Link from "next/link";
 import { ReactElement, useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
@@ -47,7 +48,7 @@ const BrokerListStyled = styled.div`
   }
 `;
 
-const BrokerList = () => {
+const BrokerList: Page = () => {
   const [user, userLoading, userError] = useAuthState(auth);
   const [showModal, setShowModal] = useState<TokenGenType | null>(null);
   const [play, setPlay] = useState<number | undefined>(undefined);
@@ -82,7 +83,6 @@ const BrokerList = () => {
       }) ?? [];
 
   const deleteBroker = async (userID: string) => {
-    // Delete broker from firestore using react-firebase-hooks
     try {
       const userDocSnapshot = await getDocs(collection(db, "users"));
       if (userDocSnapshot.empty) {

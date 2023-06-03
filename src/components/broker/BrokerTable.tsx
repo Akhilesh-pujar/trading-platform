@@ -82,7 +82,7 @@ const TableStyled = styled.table`
     backdrop-filter: blur(0.5rem);
   }
 
-  @media screen and (max-width: 50rem) {
+  @media screen and (max-width: 75rem) {
     th {
       display: none;
     }
@@ -172,21 +172,23 @@ const BrokerTable = ({
           <th>Generate Token</th>
           <th>Action</th>
         </tr>
-        {Array(50)
-          .fill(0)
-          .map((_, index) =>
-            brokersDetails.map((brokerDetail) => (
-              <Broker
-                key={brokerDetail.userId}
-                brokerDetails={brokerDetail}
-                index={index}
-                deleteBroker={deleteBroker}
-                play={play}
-                setPlay={setPlay}
-                GenerateToken={GenerateToken}
-              />
-            ))
-          )}
+        {
+          // Array(50)
+          //   .fill(0)
+          //   .map((_, index) =>
+          brokersDetails.map((brokerDetail, index) => (
+            <Broker
+              key={brokerDetail.userId}
+              brokerDetails={brokerDetail}
+              index={index}
+              deleteBroker={deleteBroker}
+              play={play}
+              setPlay={setPlay}
+              GenerateToken={GenerateToken}
+            />
+          ))
+          // )
+        }
       </TableStyled>
     );
   } else {
