@@ -6,7 +6,7 @@ import { CiPause1 } from "react-icons/ci";
 import { IoPlayOutline } from "react-icons/io5";
 import { RxCrossCircled } from "react-icons/rx";
 import { BrokerDetailType } from "../../../types/BrokerDetail";
-import type { TokenGenType } from "../../../types/TokenGenType";
+import { type TokenGenType } from "../../../types/TokenGenType";
 import { useCookies } from "react-cookie";
 
 const TableStyled = styled.table`

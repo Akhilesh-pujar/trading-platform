@@ -14,7 +14,7 @@ import {
   arrayUnion,
   collection,
   query,
-  serverTimestamp,
+  // serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -108,7 +108,7 @@ const BrokerOTP = ({
               {
                 brokerName: brkname,
                 email,
-                lastAccessTime: serverTimestamp(),
+                lastAccessTime: new Date().getTime(),
                 userName: uname,
                 userId: uid,
                 branchId: brnchid,
@@ -127,7 +127,7 @@ const BrokerOTP = ({
             brokers: arrayUnion({
               brokerName: brkname,
               email,
-              lastAccessTime: serverTimestamp(),
+              lastAccessTime: new Date().getTime(),
               userName: uname,
               userId: uid,
               branchId: brnchid,
