@@ -9,6 +9,7 @@ import { SHA256 } from "crypto-js";
 import axios from "axios";
 import { BrokerType } from "./../../../types/Broker";
 import ButtonGroup from "./../buttons/ButtonGroup";
+import { BsChevronLeft } from "react-icons/bs";
 
 const brokerSchema = object({
   userid: string()
@@ -94,6 +95,10 @@ const BrokerDetails = ({
       animate="show"
       exit="exit"
     >
+      <Link href="/broker-list" data-back>
+        <BsChevronLeft />
+        <span>Back</span>
+      </Link>
       <div className="content">
         <div className="form-top">
           <h2>Add Broker</h2>
@@ -147,7 +152,6 @@ const BrokerDetails = ({
       </div>
       <ButtonGroup>
         <button type="submit">Get OTP</button>
-        <Link href="/broker-list">Cancel</Link>
       </ButtonGroup>
     </motion.form>
   );

@@ -33,6 +33,7 @@ const AddBrokerStyled = styled.div`
     }
   }
   & form {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -47,6 +48,22 @@ const AddBrokerStyled = styled.div`
     @media screen and (width > 50rem) {
       max-width: 40rem;
       max-height: calc(100vh - 4rem);
+    }
+    & [data-back] {
+      align-self: flex-start;
+      margin: 2rem 0 0 2rem;
+      padding: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      color: rgb(var(--dark-color), 0.75);
+      background-color: rgb(var(--dark-color), 0.05);
+      &:hover {
+        background-color: rgb(var(--dark-color), 0.1);
+      }
     }
     & .content {
       display: flex;

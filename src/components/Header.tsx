@@ -5,6 +5,8 @@ import rocket from "./../../public/icon/rocket.png";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import HeaderSkeleton from "./skeleton/HeaderSkeleton";
+import { BiUserCircle } from "react-icons/bi";
+import { useRef } from "react";
 
 const HeaderStyle = styled.header`
   position: fixed;
@@ -94,7 +96,8 @@ const HeaderStyle = styled.header`
     & .icons {
       display: flex;
       align-items: center;
-      & a {
+      gap: 2rem;
+      & > a {
         position: relative;
         font-weight: 600;
         font-size: small;
@@ -128,12 +131,42 @@ const HeaderStyle = styled.header`
           transform: skewX(-30deg) translateX(700%);
         }
       }
+      & button {
+        position: relative;
+        font-size: 1.75rem;
+        display: grid;
+        place-items: center;
+        & dialog {
+          top: 150%;
+          right: 0;
+          left: 0;
+          border: 1px solid rgb(var(--dark-color), 0.1);
+          border-radius: 0.5rem;
+          padding: 0.5rem 1rem;
+          background-color: rgb(var(--light-color));
+          box-shadow: 0 0.1rem 0.5rem rgb(var(--dark-color), 0.25);
+          & > :first-child {
+            border-bottom: 1px solid rgb(var(--dark-color), 0.1);
+          }
+          & a,
+          span {
+            color: rgb(var(--dark-color));
+            background-color: transparent;
+            white-space: nowrap;
+            display: block;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+          }
+        }
+      }
     }
   }
 `;
 
 const Header = () => {
   const [user, loading, error] = useAuthState(auth);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   return (
     <HeaderStyle>
       <div className="navbar container">
@@ -160,9 +193,35 @@ const Header = () => {
           {!!loading ? (
             <HeaderSkeleton />
           ) : !!error || !user ? (
-            <Link href="/signup">Get Started</Link>
+            <Link href="/">Get Started</Link>
           ) : (
-            !!user && <Link href="/broker-list">Trade</Link>
+            !!user && (
+              <>
+                <button
+                  onClick={() => {
+                    if (dialogRef.current?.open) {
+                      dialogRef.current?.close();
+                    } else {
+                      dialogRef.current?.show();
+                    }
+                  }}
+                >
+                  <BiUserCircle />
+                  <dialog ref={dialogRef}>
+                    <Link href="/setting">Setting</Link>
+                    <span
+                      onClick={() => {
+                        auth.signOut();
+                        dialogRef.current?.close();
+                      }}
+                    >
+                      Sign Out
+                    </span>
+                  </dialog>
+                </button>
+                <Link href="/broker-list">Trade</Link>
+              </>
+            )
           )}
         </div>
       </div>
